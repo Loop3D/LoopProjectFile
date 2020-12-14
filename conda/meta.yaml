@@ -1,0 +1,40 @@
+{% set name = "loopprojectfile" %}
+{% set version = "1.0.1" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  git_url: https://github.com/Loop3D/LoopProjectFile
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install ."
+
+requirements:
+  host:
+    - pip
+    - python
+    - setuptools
+  run:
+    - numpy
+    - pandas
+    - netcdf4
+
+test:
+  imports:
+    - LoopProjectFile
+
+about:
+  home: "https://github.com/Loop3D/map2loop-2"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Generate 3D model data using 2D maps."
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - yohanderose
