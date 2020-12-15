@@ -23,16 +23,16 @@ requirements:
     - pandas
     - netcdf4
 
-test:
-  imports:
-    - LoopProjectFile
+# test:
+#   imports:
+#     - LoopProjectFile
 
 about:
-  home: "https://github.com/Loop3D/map2loop-2"
+  home: "https://github.com/Loop3D/LoopProjectFile"
   license: MIT
   license_family: MIT
   license_file: 
-  summary: "Generate 3D model data using 2D maps."
+  summary: "File that links backend processes to the Loop GUI."
   doc_url: 
   dev_url: 
 
