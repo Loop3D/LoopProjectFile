@@ -1,6 +1,9 @@
 # import netCDF4
 
 
+from pyproj import CRS
+
+
 # Check extents of Loop Project File is valid
 def CheckExtentsValid(rootGroup, xyzGridSize, verbose=False):
     """
@@ -161,8 +164,16 @@ def GetExtents(rootGroup):
         errStr = "(ERROR) No or incomplete spacing data in loop project file"
         print(errStr)
         response = {"errorFlag": True, "errorString": errStr}
+    
     if response["errorFlag"] is False:
-        response["value"] = {"geodesic": geodesic, "utm": utm, "depth": depth, "spacing": spacing}
+        if "utmZone" in rootGroup.ncattrs() and "utmNorthSouth" in rootGroup.ncattrs():
+            utm_zone = rootGroup.utmZone
+            is_southern = rootGroup.utmNorthSouth in ['S', 's', 0]
+            crs = CRS(proj='utm', zone=utm_zone, south=is_southern)
+            epsg = crs.to_epsg()
+        else:
+            epsg = None  
+        response["value"] = {"geodesic": geodesic, "utm": utm, "depth": depth, "spacing": spacing, "epsg": epsg}
     return response
 
 
@@ -219,6 +230,10 @@ def SetExtents(rootGroup, geodesic, utm, depth, spacing, preference="utm"):
         rootGroup.maxEasting = utm[3]
         rootGroup.minNorthing = utm[4]
         rootGroup.maxNorthing = utm[5]
+
+        crs = CRS( proj='utm', zone = rootGroup.utmZone, south = rootGroup.utmNorthSouth == 0)
+        rootGroup.epsg = crs.to_epsg()
+
     if len(depth) != 2:
         errStr = "(ERROR) Invalid number of depth boundary values (" + str(len(depth)) + ")"
         print(errStr)
@@ -259,3 +274,4 @@ def SetExtents(rootGroup, geodesic, utm, depth, spacing, preference="utm"):
         rootGroup.topDepth = tmp
 
     return response
+
