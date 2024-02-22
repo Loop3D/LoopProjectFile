@@ -1,4 +1,3 @@
-
 # Check Probability Model valid if present
 def CheckProbabilityModelValid(rootGroup, verbose=False):
     """

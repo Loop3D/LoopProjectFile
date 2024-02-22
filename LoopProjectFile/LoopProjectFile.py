@@ -31,6 +31,7 @@ a failure or "value" in the case of a successful get call.
 """
 import numpy
 import pandas
+
 # import sys
 import os
 import enum
@@ -46,11 +47,11 @@ import LoopProjectFile.ProbabilityModels as ProbabilityModels
 
 
 class EventType(enum.IntEnum):
-    INVALIDEVENT = -1,
-    FAULTEVENT = 0,
-    FOLDEVENT = 1,
-    FOLIATIONSEVENT = 2,
-    DISCONTINUITYEVENT = 3,
+    INVALIDEVENT = (-1,)
+    FAULTEVENT = (0,)
+    FOLDEVENT = (1,)
+    FOLIATIONSEVENT = (2,)
+    DISCONTINUITYEVENT = (3,)
     STRATIGRAPHICLAYER = 4
 
 
@@ -61,6 +62,7 @@ class EventRelationshipType(enum.IntEnum):
     FAULT_FAULT_SPLAY = 2
     FAULT_FAULT_ABUT = 3
     FAULT_FAULT_OVERPRINT = 4
+
 
 # ###  External Accessors ### #
 
@@ -90,13 +92,13 @@ def CreateBasic(filename):
     else:
         rootGroup = netCDF4.Dataset(filename, "w", format="NETCDF4")
         response = Version.SetVersion(rootGroup, version=Version.LoopVersion())
-        if not response['errorFlag']:
+        if not response["errorFlag"]:
             response = DataCollection.SetDefaultSources(rootGroup)
-        if not response['errorFlag']:
+        if not response["errorFlag"]:
             response = DataCollection.SetDefaultRawSourceData(rootGroup)
-        if not response['errorFlag']:
+        if not response["errorFlag"]:
             response = DataCollection.SetDefaultConfiguration(rootGroup)
-        if not response['errorFlag']:
+        if not response["errorFlag"]:
             response = StructuralModels.SetDefaultConfiguration(rootGroup)
         rootGroup.close()
     return response
@@ -228,15 +230,21 @@ def Set(filename, element, **kwargs):
         elif element == "foliationObservations":
             response = DataCollection.SetFoliationObservations(root, **kwargs)
         elif element == "foliationObservationsAppend":
-            response = DataCollection.SetFoliationObservations(root, append=True, **kwargs)
+            response = DataCollection.SetFoliationObservations(
+                root, append=True, **kwargs
+            )
         elif element == "discontinuityObservations":
             response = DataCollection.SetDiscontinuityObservations(root, **kwargs)
         elif element == "discontinuityObservationsAppend":
-            response = DataCollection.SetDiscontinuityObservations(root, append=True, **kwargs)
+            response = DataCollection.SetDiscontinuityObservations(
+                root, append=True, **kwargs
+            )
         elif element == "stratigraphicObservations":
             response = DataCollection.SetStratigraphicObservations(root, **kwargs)
         elif element == "stratigraphicObservationsAppend":
-            response = DataCollection.SetStratigraphicObservations(root, append=True, **kwargs)
+            response = DataCollection.SetStratigraphicObservations(
+                root, append=True, **kwargs
+            )
         elif element == "contacts":
             response = DataCollection.SetContacts(root, **kwargs)
         elif element == "contactsAppend":
@@ -244,7 +252,9 @@ def Set(filename, element, **kwargs):
         elif element == "drillholeObservations":
             response = DataCollection.SetDrillholeObservations(root, **kwargs)
         elif element == "drillholeObservationsAppend":
-            response = DataCollection.SetDrillholeObservations(root, append=True, **kwargs)
+            response = DataCollection.SetDrillholeObservations(
+                root, append=True, **kwargs
+            )
         elif element == "drillholeSurveys":
             response = DataCollection.SetDrillholeSurveys(root, **kwargs)
         elif element == "drillholeSurveysAppend":
@@ -252,11 +262,15 @@ def Set(filename, element, **kwargs):
         elif element == "drillholeProperties":
             response = DataCollection.SetDrillholeProperties(root, **kwargs)
         elif element == "drillholePropertiesAppend":
-            response = DataCollection.SetDrillholeProperties(root, append=True, **kwargs)
+            response = DataCollection.SetDrillholeProperties(
+                root, append=True, **kwargs
+            )
         elif element == "stratigraphicLog":
             response = ExtractedInformation.SetStratigraphicLog(root, **kwargs)
         elif element == "stratigraphicLogAppend":
-            response = ExtractedInformation.SetStratigraphicLog(root, append=True, **kwargs)
+            response = ExtractedInformation.SetStratigraphicLog(
+                root, append=True, **kwargs
+            )
         elif element == "faultLog":
             response = ExtractedInformation.SetFaultLog(root, **kwargs)
         elif element == "faultLogAppend":
@@ -272,7 +286,9 @@ def Set(filename, element, **kwargs):
         elif element == "discontinuityLog":
             response = ExtractedInformation.SetDiscontinuityLog(root, **kwargs)
         elif element == "discontinuityLogAppend":
-            response = ExtractedInformation.SetDiscontinuityLog(root, append=True, **kwargs)
+            response = ExtractedInformation.SetDiscontinuityLog(
+                root, append=True, **kwargs
+            )
         elif element == "drillholeLog":
             response = ExtractedInformation.SetDrillholeLog(root, **kwargs)
         elif element == "drillholeLogAppend":
@@ -288,7 +304,7 @@ def Set(filename, element, **kwargs):
         elif element == "structuralModelsConfig":
             response = StructuralModels.SetConfiguration(root, **kwargs)
         else:
-            errStr = "(ERROR) Unknown element for Set function \'" + element + "\'"
+            errStr = "(ERROR) Unknown element for Set function '" + element + "'"
             print(errStr)
             response = {"errorFlag": True, "errorString": errStr}
         root.close()
@@ -401,11 +417,12 @@ def Get(filename, element, **kwargs):
         elif element == "structuralModelsConfig":
             response = StructuralModels.GetConfiguration(root, **kwargs)
         else:
-            errStr = "(ERROR) Unknown element for Get function \'" + element + "\'"
+            errStr = "(ERROR) Unknown element for Get function '" + element + "'"
             print(errStr)
             response = {"errorFlag": True, "errorString": errStr}
         root.close()
     return response
+
 
 # Check which element are valid
 def CheckValidElements(filename, verbose=False):
@@ -428,38 +445,39 @@ def CheckValidElements(filename, verbose=False):
 
     """
     elements = {
-        "version":False,
-        "extents":False,
-        "strModel":False,
-        "faultObservations":False,
-        "foldObservations":False,
-        "foliationObservations":False,
-        "discontinuityObservations":False,
-        "stratigraphicObservations":False,
-        "contacts":False,
-        "drillholeObservations":False,
-        "drillholeSurveys":False,
-        "drillholeProperties":False,
-        "stratigraphicLog":False,
-        "faultLog":False,
-        "foldLog":False,
-        "foliationLog":False,
-        "discontinuityLog":False,
-        "drillholeLog":False,
-        "dataCollectionConfig":False,
-        "dataCollectionSources":False,
-        "dataCollectionRawSourceData":False,
-        "eventRelationships":False,
-        "structuralModelsConfig":False,
+        "version": False,
+        "extents": False,
+        "strModel": False,
+        "faultObservations": False,
+        "foldObservations": False,
+        "foliationObservations": False,
+        "discontinuityObservations": False,
+        "stratigraphicObservations": False,
+        "contacts": False,
+        "drillholeObservations": False,
+        "drillholeSurveys": False,
+        "drillholeProperties": False,
+        "stratigraphicLog": False,
+        "faultLog": False,
+        "foldLog": False,
+        "foliationLog": False,
+        "discontinuityLog": False,
+        "drillholeLog": False,
+        "dataCollectionConfig": False,
+        "dataCollectionSources": False,
+        "dataCollectionRawSourceData": False,
+        "eventRelationships": False,
+        "structuralModelsConfig": False,
     }
-    if (not CheckFileIsLoopProjectFile(filename)):
-        if (verbose):
+    if not CheckFileIsLoopProjectFile(filename):
+        if verbose:
             print(f"{filename} is not a valid loop project file")
         return None
     else:
         for element in elements:
             elements[element] = Get(filename, element)["errorFlag"]
         return elements
+
 
 # Check full project structure
 def CheckFileValid(filename, verbose=False):
@@ -495,9 +513,17 @@ def CheckFileValid(filename, verbose=False):
         valid = Version.CheckVersionValid(rootgrp, verbose) and valid
         valid = Extents.CheckExtentsValid(rootgrp, xyzGridSize, verbose) and valid
         valid = DataCollection.CheckDataCollectionValid(rootgrp, verbose) and valid
-        valid = ExtractedInformation.CheckExtractedInformationValid(rootgrp, verbose) and valid
-        valid = StructuralModels.CheckStructuralModelsValid(rootgrp, xyzGridSize, verbose) and valid
-        valid = GeophysicalModels.CheckGeophysicalModelsValid(rootgrp, verbose) and valid
+        valid = (
+            ExtractedInformation.CheckExtractedInformationValid(rootgrp, verbose)
+            and valid
+        )
+        valid = (
+            StructuralModels.CheckStructuralModelsValid(rootgrp, xyzGridSize, verbose)
+            and valid
+        )
+        valid = (
+            GeophysicalModels.CheckGeophysicalModelsValid(rootgrp, verbose) and valid
+        )
         valid = ProbabilityModels.CheckProbabilityModelValid(rootgrp, verbose) and valid
 
         # Close and report
@@ -512,111 +538,239 @@ def CheckFileValid(filename, verbose=False):
 
 
 # Explicitly setup Compound Types used in the LoopProjectFile module
-faultObservationType = numpy.dtype([
-                        ('eventId', '<u4'),
-                        ('easting', '<f8'), ('northing', '<f8'), ('altitude', '<f8'), ('type', '<i4'),
-                        ('dipDir', '<f8'), ('dip', '<f8'), ('dipPolarity', '<f8'),
-                        ('val', '<f8'), ('displacement', '<f8'), ('posOnly', 'u1')]
-                        )
+faultObservationType = numpy.dtype(
+    [
+        ("eventId", "<u4"),
+        ("easting", "<f8"),
+        ("northing", "<f8"),
+        ("altitude", "<f8"),
+        ("type", "<i4"),
+        ("dipDir", "<f8"),
+        ("dip", "<f8"),
+        ("dipPolarity", "<f8"),
+        ("val", "<f8"),
+        ("displacement", "<f8"),
+        ("posOnly", "u1"),
+    ]
+)
 
-foldObservationType = numpy.dtype([
-                        ('eventId', '<u4'),
-                        ('easting', '<f8'), ('northing', '<f8'), ('altitude', '<f8'), ('type', '<i4'),
-                        ('axisX', '<f8'), ('axisY', '<f8'), ('axisZ', '<f8'),
-                        ('foliation', 'S120'), ('whatIsFolded', 'S120')]
-                        )
+foldObservationType = numpy.dtype(
+    [
+        ("eventId", "<u4"),
+        ("easting", "<f8"),
+        ("northing", "<f8"),
+        ("altitude", "<f8"),
+        ("type", "<i4"),
+        ("axisX", "<f8"),
+        ("axisY", "<f8"),
+        ("axisZ", "<f8"),
+        ("foliation", "S120"),
+        ("whatIsFolded", "S120"),
+    ]
+)
 
-foliationObservationType = numpy.dtype([
-                        ('eventId', '<u4'),
-                        ('easting', '<f8'), ('northing', '<f8'), ('altitude', '<f8'), ('type', '<i4'),
-                        ('dipDir', '<f8'), ('dip', '<f8')]
-                        )
+foliationObservationType = numpy.dtype(
+    [
+        ("eventId", "<u4"),
+        ("easting", "<f8"),
+        ("northing", "<f8"),
+        ("altitude", "<f8"),
+        ("type", "<i4"),
+        ("dipDir", "<f8"),
+        ("dip", "<f8"),
+    ]
+)
 
-discontinuityObservationType = numpy.dtype([
-                        ('eventId', '<u4'),
-                        ('easting', '<f8'), ('northing', '<f8'), ('altitude', '<f8'), ('type', '<i4'),
-                        ('dipDir', '<f8'), ('dip', '<f8')]
-                        )
+discontinuityObservationType = numpy.dtype(
+    [
+        ("eventId", "<u4"),
+        ("easting", "<f8"),
+        ("northing", "<f8"),
+        ("altitude", "<f8"),
+        ("type", "<i4"),
+        ("dipDir", "<f8"),
+        ("dip", "<f8"),
+    ]
+)
 
-contactObservationType = numpy.dtype([
-                        ('layerId', '<u4'),
-                        ('easting', '<f8'), ('northing', '<f8'), ('altitude', '<f8'), ('type', '<i4')]
-                        )
+contactObservationType = numpy.dtype(
+    [
+        ("layerId", "<u4"),
+        ("easting", "<f8"),
+        ("northing", "<f8"),
+        ("altitude", "<f8"),
+        ("type", "<i4"),
+    ]
+)
 
-stratigraphicObservationType = numpy.dtype([
-                        ('layerId', '<u4'),
-                        ('easting', '<f8'), ('northing', '<f8'), ('altitude', '<f8'), ('type', '<i4'),
-                        ('dipDir', '<f8'), ('dip', '<f8'), ('dipPolarity', '<f8'),
-                        ('layer', 'S120')]
-                        )
+stratigraphicObservationType = numpy.dtype(
+    [
+        ("layerId", "<u4"),
+        ("easting", "<f8"),
+        ("northing", "<f8"),
+        ("altitude", "<f8"),
+        ("type", "<i4"),
+        ("dipDir", "<f8"),
+        ("dip", "<f8"),
+        ("dipPolarity", "<f8"),
+        ("layer", "S120"),
+    ]
+)
 
-faultEventType = numpy.dtype([
-                        ('eventId', '<u4'),
-                        ('minAge', '<f8'), ('maxAge', '<f8'), ('name', 'S120'), ('group', 'S120'), ('supergroup', 'S120'),
-                        ('enabled', 'u1'), ('rank', '<u4'), ('type', '<i4'),
-                        ('avgDisplacement', '<f8'), ('avgDownthrowDir', '<f8'),
-                        ('influenceDistance', '<f8'), ('verticalRadius', '<f8'),
-                        ('horizontalRadius', '<f8'), ('colour', 'S7'),
-                        ('centreEasting', '<f8'), ('centreNorthing', '<f8'), ('centreAltitude', '<f8'),
-                        ('avgSlipDirEasting', '<f8'), ('avgSlipDirNorthing', '<f8'), ('avgSlipDirAltitude', '<f8'),
-                        ('avgNormalEasting', '<f8'), ('avgNormalNorthing', '<f8'), ('avgNormalAltitude', '<f8')]
-                        )
+faultEventType = numpy.dtype(
+    [
+        ("eventId", "<u4"),
+        ("minAge", "<f8"),
+        ("maxAge", "<f8"),
+        ("name", "S120"),
+        ("group", "S120"),
+        ("supergroup", "S120"),
+        ("enabled", "u1"),
+        ("rank", "<u4"),
+        ("type", "<i4"),
+        ("avgDisplacement", "<f8"),
+        ("avgDownthrowDir", "<f8"),
+        ("influenceDistance", "<f8"),
+        ("verticalRadius", "<f8"),
+        ("horizontalRadius", "<f8"),
+        ("colour", "S7"),
+        ("centreEasting", "<f8"),
+        ("centreNorthing", "<f8"),
+        ("centreAltitude", "<f8"),
+        ("avgSlipDirEasting", "<f8"),
+        ("avgSlipDirNorthing", "<f8"),
+        ("avgSlipDirAltitude", "<f8"),
+        ("avgNormalEasting", "<f8"),
+        ("avgNormalNorthing", "<f8"),
+        ("avgNormalAltitude", "<f8"),
+    ]
+)
 
-foldEventType = numpy.dtype([
-                        ('eventId', '<u4'),
-                        ('minAge', '<f8'), ('maxAge', '<f8'), ('name', 'S120'), ('group', 'S120'), ('supergroup', 'S120'),
-                        ('enabled', 'u1'), ('rank', '<u4'), ('type', '<i4'),
-                        ('periodic', 'u1'), ('wavelength', '<f8'), ('amplitude', '<f8'),
-                        ('asymmetry', 'u1'), ('asymmetryShift', '<f8'),
-                        ('secondaryWavelength', '<f8'), ('secondaryAmplitude', '<f8')]
-                        )
+foldEventType = numpy.dtype(
+    [
+        ("eventId", "<u4"),
+        ("minAge", "<f8"),
+        ("maxAge", "<f8"),
+        ("name", "S120"),
+        ("group", "S120"),
+        ("supergroup", "S120"),
+        ("enabled", "u1"),
+        ("rank", "<u4"),
+        ("type", "<i4"),
+        ("periodic", "u1"),
+        ("wavelength", "<f8"),
+        ("amplitude", "<f8"),
+        ("asymmetry", "u1"),
+        ("asymmetryShift", "<f8"),
+        ("secondaryWavelength", "<f8"),
+        ("secondaryAmplitude", "<f8"),
+    ]
+)
 
-foliationEventType = numpy.dtype([
-                        ('eventId', '<u4'),
-                        ('minAge', '<f8'), ('maxAge', '<f8'), ('name', 'S120'), ('group', 'S120'), ('supergroup', 'S120'),
-                        ('enabled', 'u1'), ('rank', '<u4'), ('type', '<i4'),
-                        ('lowerScalarValue', '<f8'), ('upperScalarValue', '<f8')]
-                        )
+foliationEventType = numpy.dtype(
+    [
+        ("eventId", "<u4"),
+        ("minAge", "<f8"),
+        ("maxAge", "<f8"),
+        ("name", "S120"),
+        ("group", "S120"),
+        ("supergroup", "S120"),
+        ("enabled", "u1"),
+        ("rank", "<u4"),
+        ("type", "<i4"),
+        ("lowerScalarValue", "<f8"),
+        ("upperScalarValue", "<f8"),
+    ]
+)
 
-discontinuityEventType = numpy.dtype([
-                        ('eventId', '<u4'),
-                        ('minAge', '<f8'), ('maxAge', '<f8'), ('name', 'S120'), ('group', 'S120'), ('supergroup', 'S120'),
-                        ('enabled', 'u1'), ('rank', '<u4'), ('type', '<i4'),
-                        ('scalarValue', '<f8')]
-                        )
+discontinuityEventType = numpy.dtype(
+    [
+        ("eventId", "<u4"),
+        ("minAge", "<f8"),
+        ("maxAge", "<f8"),
+        ("name", "S120"),
+        ("group", "S120"),
+        ("supergroup", "S120"),
+        ("enabled", "u1"),
+        ("rank", "<u4"),
+        ("type", "<i4"),
+        ("scalarValue", "<f8"),
+    ]
+)
 
-stratigraphicLayerType = numpy.dtype([
-                        ('layerId', '<u4'),
-                        ('minAge', '<f8'), ('maxAge', '<f8'), ('name', 'S120'), ('group', 'S120'), ('supergroup', 'S120'),
-                        ('enabled', 'u1'), ('rank', '<u4'), ('type', '<i4'),
-                        ('thickness', '<f8'),
-                        ('colour1Red', 'u1'), ('colour1Green', 'u1'), ('colour1Blue', 'u1'),
-                        ('colour2Red', 'u1'), ('colour2Green', 'u1'), ('colour2Blue', 'u1')]
-                        )
+stratigraphicLayerType = numpy.dtype(
+    [
+        ("layerId", "<u4"),
+        ("minAge", "<f8"),
+        ("maxAge", "<f8"),
+        ("name", "S120"),
+        ("group", "S120"),
+        ("supergroup", "S120"),
+        ("enabled", "u1"),
+        ("rank", "<u4"),
+        ("type", "<i4"),
+        ("thickness", "<f8"),
+        ("colour1Red", "u1"),
+        ("colour1Green", "u1"),
+        ("colour1Blue", "u1"),
+        ("colour2Red", "u1"),
+        ("colour2Green", "u1"),
+        ("colour2Blue", "u1"),
+    ]
+)
 
-eventRelationshipType = numpy.dtype([
-                        ('eventId1', '<u4'), ('eventId2', '<u4'), ('bidirectional', 'u1'),
-                        ('angle', '<f8'), ('type', '<i4')]
-                        )
+eventRelationshipType = numpy.dtype(
+    [
+        ("eventId1", "<u4"),
+        ("eventId2", "<u4"),
+        ("bidirectional", "u1"),
+        ("angle", "<f8"),
+        ("type", "<i4"),
+    ]
+)
 
-drillholeDescriptionType = numpy.dtype([
-                        ('collarId', '<u4'), ('holeName', 'S120'),
-                        ('surfaceX', '<f8'), ('surfaceY', '<f8'), ('surfaceZ', '<f8')]
-                        )
+drillholeDescriptionType = numpy.dtype(
+    [
+        ("collarId", "<u4"),
+        ("holeName", "S120"),
+        ("surfaceX", "<f8"),
+        ("surfaceY", "<f8"),
+        ("surfaceZ", "<f8"),
+    ]
+)
 
-drillholePropertyType = numpy.dtype([('collarId', '<u4'), ('propertyName', 'S120'), ('propertyValue', 'S80')])
+drillholePropertyType = numpy.dtype(
+    [("collarId", "<u4"), ("propertyName", "S120"), ("propertyValue", "S80")]
+)
 
-drillholeObservationType = numpy.dtype([
-                        ('collarId', '<u4'),
-                        ('fromX', '<f8'), ('fromY', '<f8'), ('fromZ', '<f8'), ('layerId', '<u4'),
-                        ('toX', '<f8'), ('toY', '<f8'), ('toZ', '<f8'), ('from', '<f8'), ('to', '<f8'),
-                        ('propertyCode', 'S120'), ('property1', 'S120'), ('property2', 'S120'), ('unit', 'S120')]
-                        )
+drillholeObservationType = numpy.dtype(
+    [
+        ("collarId", "<u4"),
+        ("fromX", "<f8"),
+        ("fromY", "<f8"),
+        ("fromZ", "<f8"),
+        ("layerId", "<u4"),
+        ("toX", "<f8"),
+        ("toY", "<f8"),
+        ("toZ", "<f8"),
+        ("from", "<f8"),
+        ("to", "<f8"),
+        ("propertyCode", "S120"),
+        ("property1", "S120"),
+        ("property2", "S120"),
+        ("unit", "S120"),
+    ]
+)
 
-drillholeSurveyType = numpy.dtype([
-                        ('collarId', '<u4'), ('depth', '<f8'),
-                        ('angle1', '<f8'), ('angle2', '<f8'), ('unit', 'S120')]
-                        )
+drillholeSurveyType = numpy.dtype(
+    [
+        ("collarId", "<u4"),
+        ("depth", "<f8"),
+        ("angle1", "<f8"),
+        ("angle2", "<f8"),
+        ("unit", "S120"),
+    ]
+)
 
 
 def ConvertDataFrame(df, dtype):
@@ -633,7 +787,7 @@ def CheckFileIsLoopProjectFile(filename, verbose=False):
     fileResp = OpenProjectFile(filename, readOnly=True, verbose=verbose)
     if fileResp["errorFlag"]:
         valid = False
-        print('Project file is not a LoopProjectFile')
+        print("Project file is not a LoopProjectFile")
     else:
         rootgrp = fileResp["root"]
         rootgrp.close()

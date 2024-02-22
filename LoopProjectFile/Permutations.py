@@ -24,7 +24,7 @@ def checkBrokenRules(lst, rules):
         return True
     for rule in rules:
         if rule[0] in lst and rule[1] in lst:
-            if (lst.index(rule[0]) > lst.index(rule[1])):
+            if lst.index(rule[0]) > lst.index(rule[1]):
                 return True
     return False
 
@@ -46,11 +46,19 @@ def checkBrokenEventRules(lst, rules):
 
 # Recursive permutation calculation starting with a base number of elements
 # Can add restrictions as rules
-def perm(baseNumber, numberLeft=-1, lst=[], rules=[], current=[], isInvalid=checkBrokenRules, returnList=True):
+def perm(
+    baseNumber,
+    numberLeft=-1,
+    lst=[],
+    rules=[],
+    current=[],
+    isInvalid=checkBrokenRules,
+    returnList=True,
+):
     # Setup first recurse if only list only basenumber given
     if len(lst) == 0:
         numberLeft = baseNumber
-        lst = range(1, baseNumber+1)
+        lst = range(1, baseNumber + 1)
         lst = ["{:d}".format(x) for x in lst]
     else:
         if numberLeft == -1:
@@ -59,7 +67,7 @@ def perm(baseNumber, numberLeft=-1, lst=[], rules=[], current=[], isInvalid=chec
     # Quick escape for 0 or 1 rules
     if numberLeft == baseNumber and len(rules) < 2:
         count = 1
-        for i in range(1, baseNumber+1):
+        for i in range(1, baseNumber + 1):
             count = count * i
         if len(rules) == 0:
             return count
@@ -80,10 +88,16 @@ def perm(baseNumber, numberLeft=-1, lst=[], rules=[], current=[], isInvalid=chec
             count = 0
         for a in range(baseNumber):
             # Skip if new value will cause multiples or rules are broken
-            if not isInvalid(current+[lst[a]], rules):
-                count = count + perm(baseNumber, numberLeft=numberLeft-1, lst=[x for x in lst if x != a],
-                                     current=current+[lst[a]], rules=rules,
-                                     isInvalid=isInvalid, returnList=returnList)
+            if not isInvalid(current + [lst[a]], rules):
+                count = count + perm(
+                    baseNumber,
+                    numberLeft=numberLeft - 1,
+                    lst=[x for x in lst if x != a],
+                    current=current + [lst[a]],
+                    rules=rules,
+                    isInvalid=isInvalid,
+                    returnList=returnList,
+                )
         return count
 
 
@@ -104,7 +118,7 @@ def ApproxPerm(nElems, nRules):
             divisor = divisor + (step * math.factorial(step))
         nRules = nRules - step
         step = step + 1
-    return round(math.factorial(nElems)/divisor)
+    return round(math.factorial(nElems) / divisor)
 
 
 # Recursive permutation calc
@@ -112,7 +126,7 @@ def ApproxPerm(nElems, nRules):
 # [Event(eventId, eventMinAge, eventMaxAge), ..., ...]
 def CalcPermutation(eventList):
     # Define base case
-    if (len(eventList) <= 1):
+    if len(eventList) <= 1:
         return 1, 1, 0
 
     # Larger case seek to split but otherwise do perm calc
@@ -122,31 +136,33 @@ def CalcPermutation(eventList):
     workingList = eventList
     remainingList = []
     for x in range(0, len(eventList)):
-        if (eventList[x].minAge > maxAge):
+        if eventList[x].minAge > maxAge:
             # Have found a break point
             workingList = eventList[0:x]
             remainingList = eventList[x:]
             break
         else:
             # Extend maxAge to compare against
-            if (eventList[x].maxAge > maxAge):
+            if eventList[x].maxAge > maxAge:
                 maxAge = eventList[x].maxAge
 
     # Do calcs on worklingList
     permValue = 1
     restrictions = []
     # Case for 2 in list
-    if (len(workingList) == 2):
-        if (workingList[1].minAge < workingList[0].maxAge):
+    if len(workingList) == 2:
+        if workingList[1].minAge < workingList[0].maxAge:
             permValue = 2
         else:
             permValue = 1
-    if (len(workingList) > 2):
+    if len(workingList) > 2:
         # Find any restrictions for permutations i.e. EventId 1 must be before eventId 3 (1<3)
         for a in range(len(workingList)):
             for b in range(a, len(workingList)):
                 if workingList[a].maxAge < workingList[b].minAge:
-                    restrictions.append((workingList[a].eventId, workingList[b].eventId))
+                    restrictions.append(
+                        (workingList[a].eventId, workingList[b].eventId)
+                    )
         # Calc permutations with the restrictions given
         if len(workingList) > 7:
             if len(restrictions):
@@ -154,7 +170,13 @@ def CalcPermutation(eventList):
             else:
                 permValue = math.factorial(len(workingList))
         else:
-            permValue = perm(len(workingList), lst=workingList, rules=restrictions, isInvalid=checkBrokenEventRules, returnList=False)
+            permValue = perm(
+                len(workingList),
+                lst=workingList,
+                rules=restrictions,
+                isInvalid=checkBrokenEventRules,
+                returnList=False,
+            )
     # Recurse with remaining list
     calcPermValue, calcWorkingLength, restValue = CalcPermutation(remainingList)
     if calcWorkingLength > len(workingList):

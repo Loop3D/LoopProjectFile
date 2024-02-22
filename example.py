@@ -13,7 +13,7 @@ else:
 # Create basic Loop Project and add extents for broken hill region
 LPF.CreateBasic(filename)
 geodes = [-31.90835, -31.863242, 141.493799, 141.546666]
-utm = [54, 'S', 6469600, 6474600, 546700, 551700]
+utm = [54, "S", 6469600, 6474600, 546700, 551700]
 depth = [-1000, -6000]
 spacing = [100, 100, 100]
 LPF.Set(filename, "extents", geodesic=geodes, utm=utm, depth=depth, spacing=spacing)
@@ -56,9 +56,60 @@ else:
         print("Data received again")
 
 stratigraphy = numpy.zeros(3, LPF.stratigraphicLayerType)
-stratigraphy[0] = (1, 1.0, 1.1, b'Thick One', b'Hammersley', b'S0', 1, 0, 1, 1000.0, 0, 0, 0, 0, 0, 0)
-stratigraphy[1] = (2, 1.1, 1.2, b'Thin One', b'Hammersley', b'S0', 1, 0, 1, 100.0, 0, 0, 0, 0, 0, 0)
-stratigraphy[2] = (3, 1.1, 1.2, b'Next One', b'Hammersley', b'S0', 1, 0, 1, 50.0, 0, 0, 0, 0, 0, 0)
+stratigraphy[0] = (
+    1,
+    1.0,
+    1.1,
+    b"Thick One",
+    b"Hammersley",
+    b"S0",
+    1,
+    0,
+    1,
+    1000.0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+)
+stratigraphy[1] = (
+    2,
+    1.1,
+    1.2,
+    b"Thin One",
+    b"Hammersley",
+    b"S0",
+    1,
+    0,
+    1,
+    100.0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+)
+stratigraphy[2] = (
+    3,
+    1.1,
+    1.2,
+    b"Next One",
+    b"Hammersley",
+    b"S0",
+    1,
+    0,
+    1,
+    50.0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+)
 LPF.Set(filename, "stratigraphicLog", data=stratigraphy)
 
 # Set some dummy observations within the region of interest
@@ -70,9 +121,42 @@ LPF.Set(filename, "contacts", data=contacts)
 LPF.Set(filename, "contactsAppend", data=contacts)
 
 drillholes = numpy.zeros(3, LPF.drillholeObservationType)
-drillholes[0] = (1023, 10342.342, 6034243.226, 113.34, 1, 10342.342, 6034243.226,  13.34, 90.0, 180.0)
-drillholes[1] = (1023, 10342.342, 6034243.226,  13.34, 2, 10342.342, 6034243.226, -86.66, 90.0, 180.0)
-drillholes[2] = (1023, 10342.342, 6034243.226, -86.66, 3, 10342.342, 6034243.226, -186.66, 90.0, 180.0)
+drillholes[0] = (
+    1023,
+    10342.342,
+    6034243.226,
+    113.34,
+    1,
+    10342.342,
+    6034243.226,
+    13.34,
+    90.0,
+    180.0,
+)
+drillholes[1] = (
+    1023,
+    10342.342,
+    6034243.226,
+    13.34,
+    2,
+    10342.342,
+    6034243.226,
+    -86.66,
+    90.0,
+    180.0,
+)
+drillholes[2] = (
+    1023,
+    10342.342,
+    6034243.226,
+    -86.66,
+    3,
+    10342.342,
+    6034243.226,
+    -186.66,
+    90.0,
+    180.0,
+)
 LPF.Set(filename, "drillholeObservations", data=drillholes)
 
 # Get the observation data back out to confirm it was saved

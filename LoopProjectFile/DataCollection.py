@@ -80,16 +80,56 @@ def CreateObservationGroup(dataCollectionGroup):
     obGroup.createDimension("foliationObservationIndex", None)
     obGroup.createDimension("discontinuityObservationIndex", None)
     obGroup.createDimension("stratigraphicObservationIndex", None)
-    faultObservationType_t = obGroup.createCompoundType(LoopProjectFile.faultObservationType, 'FaultObservation')
-    obGroup.createVariable('faultObservations', faultObservationType_t, ('faultObservationIndex'), zlib=True, complevel=9)
-    foldObservationType_t = obGroup.createCompoundType(LoopProjectFile.foldObservationType, 'FoldObservation')
-    obGroup.createVariable('foldObservations', foldObservationType_t, ('foldObservationIndex'), zlib=True, complevel=9)
-    foliationObservationType_t = obGroup.createCompoundType(LoopProjectFile.foliationObservationType, 'FoliationObservation')
-    obGroup.createVariable('foliationObservations', foliationObservationType_t, ('foliationObservationIndex'), zlib=True, complevel=9)
-    discontinuityObservationType_t = obGroup.createCompoundType(LoopProjectFile.discontinuityObservationType, 'DiscontinuityObservation')
-    obGroup.createVariable('discontinuityObservations', discontinuityObservationType_t, ('discontinuityObservationIndex'), zlib=True, complevel=9)
-    stratigraphicObservationType_t = obGroup.createCompoundType(LoopProjectFile.stratigraphicObservationType, 'StratigraphicObservation')
-    obGroup.createVariable('stratigraphicObservations', stratigraphicObservationType_t, ('stratigraphicObservationIndex'), zlib=True, complevel=9)
+    faultObservationType_t = obGroup.createCompoundType(
+        LoopProjectFile.faultObservationType, "FaultObservation"
+    )
+    obGroup.createVariable(
+        "faultObservations",
+        faultObservationType_t,
+        ("faultObservationIndex"),
+        zlib=True,
+        complevel=9,
+    )
+    foldObservationType_t = obGroup.createCompoundType(
+        LoopProjectFile.foldObservationType, "FoldObservation"
+    )
+    obGroup.createVariable(
+        "foldObservations",
+        foldObservationType_t,
+        ("foldObservationIndex"),
+        zlib=True,
+        complevel=9,
+    )
+    foliationObservationType_t = obGroup.createCompoundType(
+        LoopProjectFile.foliationObservationType, "FoliationObservation"
+    )
+    obGroup.createVariable(
+        "foliationObservations",
+        foliationObservationType_t,
+        ("foliationObservationIndex"),
+        zlib=True,
+        complevel=9,
+    )
+    discontinuityObservationType_t = obGroup.createCompoundType(
+        LoopProjectFile.discontinuityObservationType, "DiscontinuityObservation"
+    )
+    obGroup.createVariable(
+        "discontinuityObservations",
+        discontinuityObservationType_t,
+        ("discontinuityObservationIndex"),
+        zlib=True,
+        complevel=9,
+    )
+    stratigraphicObservationType_t = obGroup.createCompoundType(
+        LoopProjectFile.stratigraphicObservationType, "StratigraphicObservation"
+    )
+    obGroup.createVariable(
+        "stratigraphicObservations",
+        stratigraphicObservationType_t,
+        ("stratigraphicObservationIndex"),
+        zlib=True,
+        complevel=9,
+    )
     return obGroup
 
 
@@ -101,17 +141,49 @@ def CreateDrillholeGroup(dataCollectionGroup):
     dhGroup.createDimension("drillholeObservationIndex", None)
     dhGroup.createDimension("drillholeSurveyIndex", None)
     dhGroup.createDimension("drillholePropertyIndex", None)
-    drillholeObservationType_t = dhGroup.createCompoundType(LoopProjectFile.drillholeObservationType, 'DrillholeObservation')
-    dhGroup.createVariable('drillholeObservations', drillholeObservationType_t, ('drillholeObservationIndex'), zlib=True, complevel=9)
-    drillholeSurveyType_t = dhGroup.createCompoundType(LoopProjectFile.drillholeSurveyType, 'DrillholeSurvey')
-    dhGroup.createVariable('drillholeSurveys', drillholeSurveyType_t, ('drillholeSurveyIndex'), zlib=True, complevel=9)
-    drillholePropertyType_t = dhGroup.createCompoundType(LoopProjectFile.drillholePropertyType, 'DrillholeProperty')
-    dhGroup.createVariable('drillholeProperties', drillholePropertyType_t, ('drillholePropertyIndex'), zlib=True, complevel=9)
+    drillholeObservationType_t = dhGroup.createCompoundType(
+        LoopProjectFile.drillholeObservationType, "DrillholeObservation"
+    )
+    dhGroup.createVariable(
+        "drillholeObservations",
+        drillholeObservationType_t,
+        ("drillholeObservationIndex"),
+        zlib=True,
+        complevel=9,
+    )
+    drillholeSurveyType_t = dhGroup.createCompoundType(
+        LoopProjectFile.drillholeSurveyType, "DrillholeSurvey"
+    )
+    dhGroup.createVariable(
+        "drillholeSurveys",
+        drillholeSurveyType_t,
+        ("drillholeSurveyIndex"),
+        zlib=True,
+        complevel=9,
+    )
+    drillholePropertyType_t = dhGroup.createCompoundType(
+        LoopProjectFile.drillholePropertyType, "DrillholeProperty"
+    )
+    dhGroup.createVariable(
+        "drillholeProperties",
+        drillholePropertyType_t,
+        ("drillholePropertyIndex"),
+        zlib=True,
+        complevel=9,
+    )
     return dhGroup
 
 
 # Extract observations
-def GetObservations(root, indexName, variableName, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
+def GetObservations(
+    root,
+    indexName,
+    variableName,
+    indexList=[],
+    indexRange=(0, 0),
+    keyword="",
+    verbose=False,
+):
     response = {"errorFlag": False}
     resp = GetObservationsGroup(root)
     if resp["errorFlag"]:
@@ -121,10 +193,17 @@ def GetObservations(root, indexName, variableName, indexList=[], indexRange=(0, 
             print("Getting variable " + variableName)
         oGroup = resp["value"]
         data = []
-        maxValidIndex = min(oGroup.dimensions[indexName].size, oGroup.getncattr(indexName + "_MaxValid"))
+        maxValidIndex = min(
+            oGroup.dimensions[indexName].size, oGroup.getncattr(indexName + "_MaxValid")
+        )
         # Select all option
-        if (indexList == [] and len(indexRange) == 2 and indexRange[0] == 0
-                and indexRange[1] == 0 and keyword == ""):
+        if (
+            indexList == []
+            and len(indexRange) == 2
+            and indexRange[0] == 0
+            and indexRange[1] == 0
+            and keyword == ""
+        ):
             if verbose:
                 print("Getting all")
             # Create list of observations as:
@@ -137,8 +216,11 @@ def GetObservations(root, indexName, variableName, indexList=[], indexRange=(0, 
             if verbose:
                 print("Getting keyword and index list")
             for i in indexList:
-                if (int(i) >= 0 and int(i) < maxValidIndex
-                        and oGroup.variables.get(variableName)[i] == keyword):
+                if (
+                    int(i) >= 0
+                    and int(i) < maxValidIndex
+                    and oGroup.variables.get(variableName)[i] == keyword
+                ):
                     data.append((oGroup.variables.get(variableName)[i]))
             response["value"] = data
         # Select based on keyword option
@@ -158,7 +240,11 @@ def GetObservations(root, indexName, variableName, indexList=[], indexRange=(0, 
                     data.append((oGroup.variables.get(variableName)[i]))
             response["value"] = data
         # Select based on indices range option
-        elif len(indexRange) == 2 and indexRange[0] >= 0 and indexRange[1] >= indexRange[0]:
+        elif (
+            len(indexRange) == 2
+            and indexRange[0] >= 0
+            and indexRange[1] >= indexRange[0]
+        ):
             if verbose:
                 print("Getting index range")
             for i in range(indexRange[0], indexRange[1]):
@@ -173,24 +259,74 @@ def GetObservations(root, indexName, variableName, indexList=[], indexRange=(0, 
     return response
 
 
-def GetFaultObservations(root, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
-    return GetObservations(root, 'faultObservationIndex', 'faultObservations', indexList, indexRange, keyword, verbose)
+def GetFaultObservations(
+    root, indexList=[], indexRange=(0, 0), keyword="", verbose=False
+):
+    return GetObservations(
+        root,
+        "faultObservationIndex",
+        "faultObservations",
+        indexList,
+        indexRange,
+        keyword,
+        verbose,
+    )
 
 
-def GetFoldObservations(root, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
-    return GetObservations(root, 'foldObservationIndex', 'foldObservations', indexList, indexRange, keyword, verbose)
+def GetFoldObservations(
+    root, indexList=[], indexRange=(0, 0), keyword="", verbose=False
+):
+    return GetObservations(
+        root,
+        "foldObservationIndex",
+        "foldObservations",
+        indexList,
+        indexRange,
+        keyword,
+        verbose,
+    )
 
 
-def GetFoliationObservations(root, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
-    return GetObservations(root, 'foliationObservationIndex', 'foliationObservations', indexList, indexRange, keyword, verbose)
+def GetFoliationObservations(
+    root, indexList=[], indexRange=(0, 0), keyword="", verbose=False
+):
+    return GetObservations(
+        root,
+        "foliationObservationIndex",
+        "foliationObservations",
+        indexList,
+        indexRange,
+        keyword,
+        verbose,
+    )
 
 
-def GetDiscontinuityObservations(root, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
-    return GetObservations(root, 'discontinuityObservationIndex', 'discontinuityObservations', indexList, indexRange, keyword, verbose)
+def GetDiscontinuityObservations(
+    root, indexList=[], indexRange=(0, 0), keyword="", verbose=False
+):
+    return GetObservations(
+        root,
+        "discontinuityObservationIndex",
+        "discontinuityObservations",
+        indexList,
+        indexRange,
+        keyword,
+        verbose,
+    )
 
 
-def GetStratigraphicObservations(root, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
-    return GetObservations(root, 'stratigraphicObservationIndex', 'stratigraphicObservations', indexList, indexRange, keyword, verbose)
+def GetStratigraphicObservations(
+    root, indexList=[], indexRange=(0, 0), keyword="", verbose=False
+):
+    return GetObservations(
+        root,
+        "stratigraphicObservationIndex",
+        "stratigraphicObservations",
+        indexList,
+        indexRange,
+        keyword,
+        verbose,
+    )
 
 
 # Set observations
@@ -249,23 +385,48 @@ def SetObservations(root, data, indexName, variableName, append=False, verbose=F
 
 
 def SetFaultObservations(root, data, append=False, verbose=False):
-    return SetObservations(root, data, 'faultObservationIndex', 'faultObservations', append, verbose)
+    return SetObservations(
+        root, data, "faultObservationIndex", "faultObservations", append, verbose
+    )
 
 
 def SetFoldObservations(root, data, append=False, verbose=False):
-    return SetObservations(root, data, 'foldObservationIndex', 'foldObservations', append, verbose)
+    return SetObservations(
+        root, data, "foldObservationIndex", "foldObservations", append, verbose
+    )
 
 
 def SetFoliationObservations(root, data, append=False, verbose=False):
-    return SetObservations(root, data, 'foliationObservationIndex', 'foliationObservations', append, verbose)
+    return SetObservations(
+        root,
+        data,
+        "foliationObservationIndex",
+        "foliationObservations",
+        append,
+        verbose,
+    )
 
 
 def SetDiscontinuityObservations(root, data, append=False, verbose=False):
-    return SetObservations(root, data, 'discontinuityObservationIndex', 'discontinuityObservations', append, verbose)
+    return SetObservations(
+        root,
+        data,
+        "discontinuityObservationIndex",
+        "discontinuityObservations",
+        append,
+        verbose,
+    )
 
 
 def SetStratigraphicObservations(root, data, append=False, verbose=False):
-    return SetObservations(root, data, 'stratigraphicObservationIndex', 'stratigraphicObservations', append, verbose)
+    return SetObservations(
+        root,
+        data,
+        "stratigraphicObservationIndex",
+        "stratigraphicObservations",
+        append,
+        verbose,
+    )
 
 
 # Extract contacts
@@ -278,39 +439,53 @@ def GetContacts(root, indexList=[], indexRange=(0, 0), keyword="", verbose=False
     else:
         group = resp["value"]
         data = []
-        maxValidIndex = min(group.dimensions['index'].size, group.getncattr("index_MaxValid"))
+        maxValidIndex = min(
+            group.dimensions["index"].size, group.getncattr("index_MaxValid")
+        )
         # Select all option
-        if (indexList == [] and len(indexRange) == 2 and indexRange[0] == 0
-                and indexRange[1] == 0 and keyword == ""):
+        if (
+            indexList == []
+            and len(indexRange) == 2
+            and indexRange[0] == 0
+            and indexRange[1] == 0
+            and keyword == ""
+        ):
             # Create list of observations as:
             # ((easting, northing, altitude), dipdir, dip, formation, layer)
             for i in range(0, maxValidIndex):
-                data.append((group.variables.get('contacts')[i]))
+                data.append((group.variables.get("contacts")[i]))
             response["value"] = data
         # Select based on keyword and list of indices option
         elif keyword != "" and indexList != []:
             for i in indexList:
-                if (int(i) >= 0 and int(i) < maxValidIndex
-                        and group.variables.get('layer')[i] == keyword):
-                    data.append((group.variables.get('contacts')[i]))
+                if (
+                    int(i) >= 0
+                    and int(i) < maxValidIndex
+                    and group.variables.get("layer")[i] == keyword
+                ):
+                    data.append((group.variables.get("contacts")[i]))
             response["value"] = data
         # Select based on keyword option
         elif keyword != "":
             for i in range(0, maxValidIndex):
-                if group.variables.get('layer')[i] == keyword:
-                    data.append((group.variables.get('contacts')[i]))
+                if group.variables.get("layer")[i] == keyword:
+                    data.append((group.variables.get("contacts")[i]))
             response["value"] = data
         # Select based on list of indices option
         elif indexList != []:
             for i in indexList:
                 if int(i) >= 0 and int(i) < maxValidIndex:
-                    data.append((group.variables.get('contacts')[i]))
+                    data.append((group.variables.get("contacts")[i]))
             response["value"] = data
         # Select based on indices range option
-        elif len(indexRange) == 2 and indexRange[0] >= 0 and indexRange[1] >= indexRange[0]:
+        elif (
+            len(indexRange) == 2
+            and indexRange[0] >= 0
+            and indexRange[1] >= indexRange[0]
+        ):
             for i in range(indexRange[0], indexRange[1]):
                 if int(i) >= 0 and int(i) < maxValidIndex:
-                    data.append((group.variables.get('contacts')[i]))
+                    data.append((group.variables.get("contacts")[i]))
             response["value"] = data
         else:
             errStr = "Non-implemented filter option"
@@ -358,16 +533,20 @@ def SetContacts(root, data, append=False, verbose=False):
         group = dcGroup.createGroup("Contacts")
         group.setncattr("index_MaxValid", -1)
         group.createDimension("index", None)
-        contactObservationType_t = group.createCompoundType(LoopProjectFile.contactObservationType, 'contactObservation')
-        group.createVariable('contacts', contactObservationType_t, ('index'), zlib=True, complevel=9)
+        contactObservationType_t = group.createCompoundType(
+            LoopProjectFile.contactObservationType, "contactObservation"
+        )
+        group.createVariable(
+            "contacts", contactObservationType_t, ("index"), zlib=True, complevel=9
+        )
     else:
         group = resp["value"]
 
     if group:
-        contactsLocation = group.variables['contacts']
+        contactsLocation = group.variables["contacts"]
         index = 0
         if append:
-            index = group.dimensions['index'].size
+            index = group.dimensions["index"].size
         for i in data:
             contactsLocation[index] = i
             index += 1
@@ -381,7 +560,15 @@ def SetContacts(root, data, append=False, verbose=False):
 
 
 # Extract drillhole observaions
-def GetDrillholeData(root, indexName, variableName, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
+def GetDrillholeData(
+    root,
+    indexName,
+    variableName,
+    indexList=[],
+    indexRange=(0, 0),
+    keyword="",
+    verbose=False,
+):
     response = {"errorFlag": False}
     # Note contacts use a different group node "Contacts" hence we cannot use GetObservations function
     resp = GetDrillholesGroup(root)
@@ -390,10 +577,17 @@ def GetDrillholeData(root, indexName, variableName, indexList=[], indexRange=(0,
     else:
         group = resp["value"]
         data = []
-        maxValidIndex = min(group.dimensions[indexName].size, group.getncattr(indexName + "_MaxValid"))
+        maxValidIndex = min(
+            group.dimensions[indexName].size, group.getncattr(indexName + "_MaxValid")
+        )
         # Select all option
-        if (indexList == [] and len(indexRange) == 2 and indexRange[0] == 0
-                and indexRange[1] == 0 and keyword == ""):
+        if (
+            indexList == []
+            and len(indexRange) == 2
+            and indexRange[0] == 0
+            and indexRange[1] == 0
+            and keyword == ""
+        ):
             # Create list of observations as:
             # ((easting, northing, altitude), dipdir, dip, formation, layer)
             for i in range(0, maxValidIndex):
@@ -402,14 +596,17 @@ def GetDrillholeData(root, indexName, variableName, indexList=[], indexRange=(0,
         # Select based on keyword and list of indices option
         elif keyword != "" and indexList != []:
             for i in indexList:
-                if (int(i) >= 0 and int(i) < maxValidIndex
-                        and group.variables.get('layer')[i] == keyword):
+                if (
+                    int(i) >= 0
+                    and int(i) < maxValidIndex
+                    and group.variables.get("layer")[i] == keyword
+                ):
                     data.append((group.variables.get(variableName)[i]))
             response["value"] = data
         # Select based on keyword option
         elif keyword != "":
             for i in range(0, maxValidIndex):
-                if group.variables.get('layer')[i] == keyword:
+                if group.variables.get("layer")[i] == keyword:
                     data.append((group.variables.get(variableName)[i]))
             response["value"] = data
         # Select based on list of indices option
@@ -419,7 +616,11 @@ def GetDrillholeData(root, indexName, variableName, indexList=[], indexRange=(0,
                     data.append((group.variables.get(variableName)[i]))
             response["value"] = data
         # Select based on indices range option
-        elif len(indexRange) == 2 and indexRange[0] >= 0 and indexRange[1] >= indexRange[0]:
+        elif (
+            len(indexRange) == 2
+            and indexRange[0] >= 0
+            and indexRange[1] >= indexRange[0]
+        ):
             for i in range(indexRange[0], indexRange[1]):
                 if int(i) >= 0 and int(i) < maxValidIndex:
                     data.append((group.variables.get(variableName)[i]))
@@ -432,16 +633,46 @@ def GetDrillholeData(root, indexName, variableName, indexList=[], indexRange=(0,
     return response
 
 
-def GetDrillholeObservations(root, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
-    return GetDrillholeData(root, 'drillholeObservationIndex', 'drillholeObservations', indexList, indexRange, keyword, verbose)
+def GetDrillholeObservations(
+    root, indexList=[], indexRange=(0, 0), keyword="", verbose=False
+):
+    return GetDrillholeData(
+        root,
+        "drillholeObservationIndex",
+        "drillholeObservations",
+        indexList,
+        indexRange,
+        keyword,
+        verbose,
+    )
 
 
-def GetDrillholeSurveys(root, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
-    return GetDrillholeData(root, 'drillholeSurveyIndex', 'drillholeSurveys', indexList, indexRange, keyword, verbose)
+def GetDrillholeSurveys(
+    root, indexList=[], indexRange=(0, 0), keyword="", verbose=False
+):
+    return GetDrillholeData(
+        root,
+        "drillholeSurveyIndex",
+        "drillholeSurveys",
+        indexList,
+        indexRange,
+        keyword,
+        verbose,
+    )
 
 
-def GetDrillholeProperties(root, indexList=[], indexRange=(0, 0), keyword="", verbose=False):
-    return GetDrillholeData(root, 'drillholePropertyIndex', 'drillholeProperties', indexList, indexRange, keyword, verbose)
+def GetDrillholeProperties(
+    root, indexList=[], indexRange=(0, 0), keyword="", verbose=False
+):
+    return GetDrillholeData(
+        root,
+        "drillholePropertyIndex",
+        "drillholeProperties",
+        indexList,
+        indexRange,
+        keyword,
+        verbose,
+    )
 
 
 # Set drillhole observations
@@ -501,15 +732,26 @@ def SetDrillholeData(root, data, indexName, variableName, append=False, verbose=
 
 
 def SetDrillholeObservations(root, data, append=False, verbose=False):
-    return SetDrillholeData(root, data, 'drillholeObservationIndex', 'drillholeObservations', append, verbose)
+    return SetDrillholeData(
+        root,
+        data,
+        "drillholeObservationIndex",
+        "drillholeObservations",
+        append,
+        verbose,
+    )
 
 
 def SetDrillholeSurveys(root, data, append=False, verbose=False):
-    return SetDrillholeData(root, data, 'drillholeSurveyIndex', 'drillholeSurveys', append, verbose)
+    return SetDrillholeData(
+        root, data, "drillholeSurveyIndex", "drillholeSurveys", append, verbose
+    )
 
 
 def SetDrillholeProperties(root, data, append=False, verbose=False):
-    return SetDrillholeData(root, data, 'drillholePropertyIndex', 'drillholeProperties', append, verbose)
+    return SetDrillholeData(
+        root, data, "drillholePropertyIndex", "drillholeProperties", append, verbose
+    )
 
 
 # Extract data collection (map2loop) configuration settings
@@ -604,55 +846,55 @@ def SetConfiguration(root, data, verbose=False):
     else:
         dcGroup = resp["value"]
 
-    if (data.contains("quietMode")):
+    if data.contains("quietMode"):
         dcGroup.quietMode = data.quietMode
-    if (data.contains("deposits")):
+    if data.contains("deposits"):
         dcGroup.deposits = data.deposits
-    if (data.contains("dtb")):
+    if data.contains("dtb"):
         dcGroup.dtb = data.dtb
-    if (data.contains("orientationDecimate")):
+    if data.contains("orientationDecimate"):
         dcGroup.orientationDecimate = data.orientationDecimate
-    if (data.contains("contactDecimate")):
+    if data.contains("contactDecimate"):
         dcGroup.contactDecimate = data.contactDecimate
-    if (data.contains("intrusionMode")):
+    if data.contains("intrusionMode"):
         dcGroup.intrusionMode = data.intrusionMode
-    if (data.contains("interpolationSpacing")):
+    if data.contains("interpolationSpacing"):
         dcGroup.interpolationSpacing = data.interpolationSpacing
-    if (data.contains("misorientation")):
+    if data.contains("misorientation"):
         dcGroup.misorientation = data.misorientation
-    if (data.contains("interpolationScheme")):
+    if data.contains("interpolationScheme"):
         dcGroup.interpolationScheme = data.interpolationScheme
-    if (data.contains("faultDecimate")):
+    if data.contains("faultDecimate"):
         dcGroup.faultDecimate = data.faultDecimate
-    if (data.contains("minFaultLength")):
+    if data.contains("minFaultLength"):
         dcGroup.minFaultLength = data.minFaultLength
-    if (data.contains("faultDip")):
+    if data.contains("faultDip"):
         dcGroup.faultDip = data.faultDip
-    if (data.contains("plutonDip")):
+    if data.contains("plutonDip"):
         dcGroup.plutonDip = data.plutonDip
-    if (data.contains("plutonForm")):
+    if data.contains("plutonForm"):
         dcGroup.plutonForm = data.plutonForm
-    if (data.contains("distBuffer")):
+    if data.contains("distBuffer"):
         dcGroup.distBuffer = data.distBuffer
-    if (data.contains("contactDip")):
+    if data.contains("contactDip"):
         dcGroup.contactDip = data.contactDip
-    if (data.contains("contactOrientationDecimate")):
+    if data.contains("contactOrientationDecimate"):
         dcGroup.contactOrientationDecimate = data.contactOrientationDecimate
-    if (data.contains("nullScheme")):
+    if data.contains("nullScheme"):
         dcGroup.nullScheme = data.nullScheme
-    if (data.contains("thicknessBuffer")):
+    if data.contains("thicknessBuffer"):
         dcGroup.thicknessBuffer = data.thicknessBuffer
-    if (data.contains("maxThicknessAllowed")):
+    if data.contains("maxThicknessAllowed"):
         dcGroup.maxThicknessAllowed = data.maxThicknessAllowed
-    if (data.contains("foldDecimate")):
+    if data.contains("foldDecimate"):
         dcGroup.foldDecimate = data.foldDecimate
-    if (data.contains("fatStep")):
+    if data.contains("fatStep"):
         dcGroup.fatStep = data.fatStep
-    if (data.contains("closeDip")):
+    if data.contains("closeDip"):
         dcGroup.closeDip = data.closeDip
-    if (data.contains("useInterpolations")):
+    if data.contains("useInterpolations"):
         dcGroup.useInterpolations = data.useInterpolations
-    if (data.contains("useFat")):
+    if data.contains("useFat"):
         dcGroup.useFat = data.useFat
     return response
 
@@ -751,19 +993,19 @@ def SetSources(root, data, verbose=False):
     else:
         dcGroup = resp["value"]
 
-    if (data.contains("structureUrl")):
+    if data.contains("structureUrl"):
         dcGroup.structureUrl = data.structureUrl
-    if (data.contains("geologyUrl")):
+    if data.contains("geologyUrl"):
         dcGroup.geologyUrl = data.geologyUrl
-    if (data.contains("faultUrl")):
+    if data.contains("faultUrl"):
         dcGroup.faultUrl = data.faultUrl
-    if (data.contains("foldUrl")):
+    if data.contains("foldUrl"):
         dcGroup.foldUrl = data.foldUrl
-    if (data.contains("mindepUrl")):
+    if data.contains("mindepUrl"):
         dcGroup.mindepUrl = data.mindepUrl
-    if (data.contains("metadataUrl")):
+    if data.contains("metadataUrl"):
         dcGroup.metadataUrl = data.metadataUrl
-    if (data.contains("sourceTags")):
+    if data.contains("sourceTags"):
         dcGroup.sourceTags = data.sourceTags
     return response
 
@@ -838,13 +1080,13 @@ def SetRawSourceData(root, data, verbose=False):
     else:
         dcGroup = resp["value"]
 
-    if (data.contains("structureRawData")):
+    if data.contains("structureRawData"):
         dcGroup.structureRawData = data.structureRawData
-    if (data.contains("geologyRawData")):
+    if data.contains("geologyRawData"):
         dcGroup.geologyRawData = data.geologyRawData
-    if (data.contains("faultRawData")):
+    if data.contains("faultRawData"):
         dcGroup.faultRawData = data.faultRawData
-    if (data.contains("foldRawData")):
+    if data.contains("foldRawData"):
         dcGroup.foldRawData = data.foldRawData
     return response
 

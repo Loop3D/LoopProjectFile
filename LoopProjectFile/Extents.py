@@ -1,9 +1,5 @@
 # import netCDF4
 
-
-from pyproj import CRS
-
-
 # Check extents of Loop Project File is valid
 def CheckExtentsValid(rootGroup, xyzGridSize, verbose=False):
     """
@@ -30,16 +26,22 @@ def CheckExtentsValid(rootGroup, xyzGridSize, verbose=False):
     # Check Projection Model
     if "workingFormat" in rootGroup.ncattrs():
         if verbose:
-            print("  Working in ", "Geodesic" if rootGroup.workingFormat == 0 else "UTM", " Projection")
+            print(
+                "  Working in ",
+                "Geodesic" if rootGroup.workingFormat == 0 else "UTM",
+                " Projection",
+            )
     else:
         print("(INVALID) No working format (Geodesic or UTM selection) in project file")
         valid = False
 
     # Check Geodesic extents
-    if ("minLatitude" in rootGroup.ncattrs()
-            and "maxLatitude" in rootGroup.ncattrs()
-            and "minLongitude" in rootGroup.ncattrs()
-            and "maxLongitude" in rootGroup.ncattrs()):
+    if (
+        "minLatitude" in rootGroup.ncattrs()
+        and "maxLatitude" in rootGroup.ncattrs()
+        and "minLongitude" in rootGroup.ncattrs()
+        and "maxLongitude" in rootGroup.ncattrs()
+    ):
         if verbose:
             print("  Geodesic extents found (deg)")
             print("\t minLatitude   = ", rootGroup.minLatitude)
@@ -51,12 +53,14 @@ def CheckExtentsValid(rootGroup, xyzGridSize, verbose=False):
         valid = False
 
     # Check UTM extents
-    if ("minNorthing" in rootGroup.ncattrs()
-            and "maxNorthing" in rootGroup.ncattrs()
-            and "minEasting" in rootGroup.ncattrs()
-            and "maxEasting" in rootGroup.ncattrs()
-            and "utmZone" in rootGroup.ncattrs()
-            and "utmNorthSouth" in rootGroup.ncattrs()):
+    if (
+        "minNorthing" in rootGroup.ncattrs()
+        and "maxNorthing" in rootGroup.ncattrs()
+        and "minEasting" in rootGroup.ncattrs()
+        and "maxEasting" in rootGroup.ncattrs()
+        and "utmZone" in rootGroup.ncattrs()
+        and "utmNorthSouth" in rootGroup.ncattrs()
+    ):
         if verbose:
             print("  UTM extents found (m)")
             print("\t minEasting    = ", rootGroup.minEasting)
@@ -64,14 +68,13 @@ def CheckExtentsValid(rootGroup, xyzGridSize, verbose=False):
             print("\t minNorthing   = ", rootGroup.minNorthing)
             print("\t maxNorthing   = ", rootGroup.maxNorthing)
             print("\t utmZone       = ", rootGroup.utmZone)
-            print("\t utmNorthSouth = ", 'N' if (rootGroup.utmNorthSouth == 1) else 'S')
+            print("\t utmNorthSouth = ", "N" if (rootGroup.utmNorthSouth == 1) else "S")
     else:
         print("(INVALID) No UTM extents found")
         valid = False
 
     # Check Depth Extents
-    if ("topDepth" in rootGroup.ncattrs()
-            and "bottomDepth" in rootGroup.ncattrs()):
+    if "topDepth" in rootGroup.ncattrs() and "bottomDepth" in rootGroup.ncattrs():
         if verbose:
             print("  Depth extents found (m)")
             print("\t bottomDepth   = ", rootGroup.bottomDepth)
@@ -81,9 +84,11 @@ def CheckExtentsValid(rootGroup, xyzGridSize, verbose=False):
         valid = False
 
     # Check X/Y/Z spacing
-    if ("spacingX" in rootGroup.ncattrs()
-            and "spacingY" in rootGroup.ncattrs()
-            and "spacingZ" in rootGroup.ncattrs()):
+    if (
+        "spacingX" in rootGroup.ncattrs()
+        and "spacingY" in rootGroup.ncattrs()
+        and "spacingZ" in rootGroup.ncattrs()
+    ):
         if verbose:
             print("  Axis Spacing (m)")
             print("\t spacing X axis = ", rootGroup.spacingX)
@@ -94,9 +99,15 @@ def CheckExtentsValid(rootGroup, xyzGridSize, verbose=False):
         valid = False
 
     if valid:
-        xyzGridSize[0] = int((rootGroup.maxEasting - rootGroup.minEasting) / rootGroup.spacingX + 1)
-        xyzGridSize[1] = int((rootGroup.maxNorthing - rootGroup.minNorthing) / rootGroup.spacingY + 1)
-        xyzGridSize[2] = int((rootGroup.topDepth - rootGroup.bottomDepth) / rootGroup.spacingZ + 1)
+        xyzGridSize[0] = int(
+            (rootGroup.maxEasting - rootGroup.minEasting) / rootGroup.spacingX + 1
+        )
+        xyzGridSize[1] = int(
+            (rootGroup.maxNorthing - rootGroup.minNorthing) / rootGroup.spacingY + 1
+        )
+        xyzGridSize[2] = int(
+            (rootGroup.topDepth - rootGroup.bottomDepth) / rootGroup.spacingZ + 1
+        )
 
     return valid
 
@@ -122,43 +133,53 @@ def GetExtents(rootGroup):
 
     """
     response = {"errorFlag": False}
-    if ("minLatitude" in rootGroup.ncattrs()
-            and "maxLatitude" in rootGroup.ncattrs()
-            and "minLongitude" in rootGroup.ncattrs()
-            and "maxLongitude" in rootGroup.ncattrs()):
+    if (
+        "minLatitude" in rootGroup.ncattrs()
+        and "maxLatitude" in rootGroup.ncattrs()
+        and "minLongitude" in rootGroup.ncattrs()
+        and "maxLongitude" in rootGroup.ncattrs()
+    ):
         geodesic = [
-            rootGroup.minLongitude, rootGroup.maxLongitude,
-            rootGroup.minLatitude, rootGroup.maxLatitude,
-            ]
+            rootGroup.minLongitude,
+            rootGroup.maxLongitude,
+            rootGroup.minLatitude,
+            rootGroup.maxLatitude,
+        ]
     else:
         errStr = "(ERROR) No or incomplete geodesic boundary in loop project file"
         print(errStr)
         response = {"errorFlag": True, "errorString": errStr}
-    if ("utmZone" in rootGroup.ncattrs()
-            and "utmNorthSouth" in rootGroup.ncattrs()
-            and "minEasting" in rootGroup.ncattrs()
-            and "maxEasting" in rootGroup.ncattrs()
-            and "minNorthing" in rootGroup.ncattrs()
-            and "maxNorthing" in rootGroup.ncattrs()):
+    if (
+        "utmZone" in rootGroup.ncattrs()
+        and "utmNorthSouth" in rootGroup.ncattrs()
+        and "minEasting" in rootGroup.ncattrs()
+        and "maxEasting" in rootGroup.ncattrs()
+        and "minNorthing" in rootGroup.ncattrs()
+        and "maxNorthing" in rootGroup.ncattrs()
+    ):
         utm = [
-          rootGroup.utmZone, rootGroup.utmNorthSouth,
-          rootGroup.minEasting, rootGroup.maxEasting,
-          rootGroup.minNorthing, rootGroup.maxNorthing
+            rootGroup.utmZone,
+            rootGroup.utmNorthSouth,
+            rootGroup.minEasting,
+            rootGroup.maxEasting,
+            rootGroup.minNorthing,
+            rootGroup.maxNorthing,
         ]
     else:
         errStr = "(ERROR) No or incomplete UTM boundary in loop project file"
         print(errStr)
         response = {"errorFlag": True, "errorString": errStr}
-    if ("topDepth" in rootGroup.ncattrs()
-            and "bottomDepth" in rootGroup.ncattrs()):
+    if "topDepth" in rootGroup.ncattrs() and "bottomDepth" in rootGroup.ncattrs():
         depth = [rootGroup.bottomDepth, rootGroup.topDepth]
     else:
         errStr = "(ERROR) No or incomplete depth boundary in loop project file"
         print(errStr)
         response = {"errorFlag": True, "errorString": errStr}
-    if ("spacingX" in rootGroup.ncattrs()
-            and "spacingY" in rootGroup.ncattrs()
-            and "spacingZ" in rootGroup.ncattrs()):
+    if (
+        "spacingX" in rootGroup.ncattrs()
+        and "spacingY" in rootGroup.ncattrs()
+        and "spacingZ" in rootGroup.ncattrs()
+    ):
         spacing = [rootGroup.spacingX, rootGroup.spacingY, rootGroup.spacingZ]
     else:
         errStr = "(ERROR) No or incomplete spacing data in loop project file"
@@ -169,11 +190,21 @@ def GetExtents(rootGroup):
         if "utmZone" in rootGroup.ncattrs() and "utmNorthSouth" in rootGroup.ncattrs():
             utm_zone = rootGroup.utmZone
             is_southern = rootGroup.utmNorthSouth in ['S', 's', 0]
-            crs = CRS(proj='utm', zone=utm_zone, south=is_southern)
-            epsg = crs.to_epsg()
+            if (utm_zone < 1 || utm_zone > 60):
+                epsg = None
+            else:
+                epsg = utm_zone + 33600
+                if is_southern:
+                    epsg = epsg + 100
         else:
-            epsg = None  
-        response["value"] = {"geodesic": geodesic, "utm": utm, "depth": depth, "spacing": spacing, "epsg": epsg}
+            epsg = None
+        response["value"] = {
+            "geodesic": geodesic,
+            "utm": utm,
+            "depth": depth,
+            "spacing": spacing,
+            "epsg": epsg,
+        }
     return response
 
 
@@ -211,7 +242,11 @@ def SetExtents(rootGroup, geodesic, utm, depth, spacing, preference="utm"):
     """
     response = {"errorFlag": False}
     if len(geodesic) != 4:
-        errStr = "(ERROR) Invalid number of geodesic boundary values (" + str(len(geodesic)) + ")"
+        errStr = (
+            "(ERROR) Invalid number of geodesic boundary values ("
+            + str(len(geodesic))
+            + ")"
+        )
         print(errStr)
         response = {"errorFlag": True, "errorString": errStr}
     else:
@@ -225,7 +260,9 @@ def SetExtents(rootGroup, geodesic, utm, depth, spacing, preference="utm"):
         response = {"errorFlag": True, "errorString": errStr}
     else:
         rootGroup.utmZone = utm[0]
-        rootGroup.utmNorthSouth = 0 if utm[1] == "S" or utm[1] == "s" or utm[1] == 0 else 1
+        rootGroup.utmNorthSouth = (
+            0 if utm[1] == "S" or utm[1] == "s" or utm[1] == 0 else 1
+        )
         rootGroup.minEasting = utm[2]
         rootGroup.maxEasting = utm[3]
         rootGroup.minNorthing = utm[4]
@@ -235,7 +272,9 @@ def SetExtents(rootGroup, geodesic, utm, depth, spacing, preference="utm"):
         rootGroup.epsg = crs.to_epsg()
 
     if len(depth) != 2:
-        errStr = "(ERROR) Invalid number of depth boundary values (" + str(len(depth)) + ")"
+        errStr = (
+            "(ERROR) Invalid number of depth boundary values (" + str(len(depth)) + ")"
+        )
         print(errStr)
         response = {"errorFlag": True, "errorString": errStr}
     else:

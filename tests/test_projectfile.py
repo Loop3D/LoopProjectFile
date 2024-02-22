@@ -20,27 +20,32 @@ def test_set_stratigraphic_log():
 
 
 def test_set_extents():
-
-    file = ProjectFile.new('test.loop3d')
-    file.extents = {'geodesic': [0, 1, -180, -179],
-                    'utm': [1,
-                            1,
-                            492670.29729283287,
-                            559597.3907658446,
-                            7495054.492409904,
-                            7522315.252989877],
-                    'depth': [-3200, 1200],
-                    'spacing': [1000, 1000, 10]}
+    file = ProjectFile.new("test.loop3d")
+    file.extents = {
+        "geodesic": [0, 1, -180, -179],
+        "utm": [
+            1,
+            1,
+            492670.29729283287,
+            559597.3907658446,
+            7495054.492409904,
+            7522315.252989877,
+        ],
+        "depth": [-3200, 1200],
+        "spacing": [1000, 1000, 10],
+    }
     extents = file.extents
-    assert extents['geodesic'] == [0, 1, -180, -179]
-    assert extents['utm'] == [1,
-                              1,
-                              492670.29729283287,
-                              559597.3907658446,
-                              7495054.492409904,
-                              7522315.252989877]
-    assert extents['depth'] == [-3200, 1200]
-    assert extents['spacing'] == [1000, 1000, 10]
+    assert extents["geodesic"] == [0, 1, -180, -179]
+    assert extents["utm"] == [
+        1,
+        1,
+        492670.29729283287,
+        559597.3907658446,
+        7495054.492409904,
+        7522315.252989877,
+    ]
+    assert extents["depth"] == [-3200, 1200]
+    assert extents["spacing"] == [1000, 1000, 10]
     assert file.is_valid()
 
     dummy_data = {'geodesic': [0, 1, -180, -179],

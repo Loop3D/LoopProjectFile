@@ -28,13 +28,23 @@ def CheckStructuralModelsValid(rootGroup, xyzGridSize=None, verbose=False):
         if verbose:
             print("  Structural Models Group Present")
         smGroup = rootGroup.groups.get("StructuralModels")
-#        if verbose: print(smGroup)
-        if "easting" in smGroup.ncattrs() and "northing" in smGroup.ncattrs() and "depth" in smGroup.ncattrs():
+        #        if verbose: print(smGroup)
+        if (
+            "easting" in smGroup.ncattrs()
+            and "northing" in smGroup.ncattrs()
+            and "depth" in smGroup.ncattrs()
+        ):
             if xyzGridSize is not None:
                 # Check gridSize from extents matches models sizes
-                smGridSize = [smGroup.dimensions["easting"].size, smGroup.dimensions["northing"].size, smGroup.dimensions["depth"].size]
+                smGridSize = [
+                    smGroup.dimensions["easting"].size,
+                    smGroup.dimensions["northing"].size,
+                    smGroup.dimensions["depth"].size,
+                ]
                 if smGridSize != xyzGridSize:
-                    print("(INVALID) Extents grid size and Structural Models Grid Size do NOT match")
+                    print(
+                        "(INVALID) Extents grid size and Structural Models Grid Size do NOT match"
+                    )
                     print("(INVALID) Extents Grid Size :           ", xyzGridSize)
                     print("(INVALID) Structural Models Grid Size : ", smGridSize)
                     valid = False
@@ -103,16 +113,24 @@ def GetStructuralModel(root, verbose=False, index=0):
         smGroup = resp["value"]
         # Check data exists at the specified index value
         # Also checking for back indexing or out-of-bounds access
-        if smGroup.dimensions.get('index') is None:
-            response = {"errorFlag": True, "errorString": "(ERROR) There are no structural models to get"}
+        if smGroup.dimensions.get("index") is None:
+            response = {
+                "errorFlag": True,
+                "errorString": "(ERROR) There are no structural models to get",
+            }
             if verbose:
                 print(response["errorString"])
-        elif smGroup.dimensions['index'].size < index or index < 0:
-            response = {"errorFlag": True, "errorString": "(ERROR) The requested index " + str(index) + " does not exist"}
+        elif smGroup.dimensions["index"].size < index or index < 0:
+            response = {
+                "errorFlag": True,
+                "errorString": "(ERROR) The requested index "
+                + str(index)
+                + " does not exist",
+            }
             if verbose:
                 print(response["errorString"])
         else:
-            data = smGroup.variables.get('data')[:, :, :, index].data
+            data = smGroup.variables.get("data")[:, :, :, index].data
             if verbose:
                 print("The shape of the structuralModel is", data.shape)
             response["value"] = data
@@ -154,17 +172,32 @@ def SetStructuralModel(root, data, index=0, verbose=False):
         smGroup.createDimension("northing", xyzGridSize[1])
         smGroup.createDimension("depth", xyzGridSize[2])
         smGroup.createDimension("index", None)
-        smGroup.createVariable('data', 'f4', ('easting', 'northing', 'depth', 'index'), zlib=True, complevel=9, fill_value=0)
-        smGroup.createVariable('minVal', 'f4', ('index'), zlib=True, complevel=9, fill_value=0)
-        smGroup.createVariable('maxVal', 'f4', ('index'), zlib=True, complevel=9, fill_value=0)
-        smGroup.createVariable('valid', 'S1', ('index'), zlib=True, complevel=9, fill_value=0)
+        smGroup.createVariable(
+            "data",
+            "f4",
+            ("easting", "northing", "depth", "index"),
+            zlib=True,
+            complevel=9,
+            fill_value=0,
+        )
+        smGroup.createVariable(
+            "minVal", "f4", ("index"), zlib=True, complevel=9, fill_value=0
+        )
+        smGroup.createVariable(
+            "maxVal", "f4", ("index"), zlib=True, complevel=9, fill_value=0
+        )
+        smGroup.createVariable(
+            "valid", "S1", ("index"), zlib=True, complevel=9, fill_value=0
+        )
     else:
         smGroup = resp["value"]
     if smGroup:
         # Do dimension checking between incoming data and existing netCDF data shape
         dataGridSize = list(data.shape)
         if dataGridSize != xyzGridSize:
-            errStr = "(ERROR) Structural Model data shape does not match extents of project"
+            errStr = (
+                "(ERROR) Structural Model data shape does not match extents of project"
+            )
             print(errStr)
             response = {"errorFlag": True, "errorString": errStr}
         else:
@@ -174,17 +207,30 @@ def SetStructuralModel(root, data, index=0, verbose=False):
                 smGroup.createDimension("northing", xyzGridSize[1])
                 smGroup.createDimension("depth", xyzGridSize[2])
                 smGroup.createDimension("index", None)
-                smGroup.createVariable('data', 'f4', ('easting', 'northing', 'depth', 'index'), zlib=True, complevel=9, fill_value=0)
-                smGroup.createVariable('minVal', 'f4', ('index'), zlib=True, complevel=9, fill_value=0)
-                smGroup.createVariable('maxVal', 'f4', ('index'), zlib=True, complevel=9, fill_value=0)
-                smGroup.createVariable('valid', 'S1', ('index'), zlib=True, complevel=9, fill_value=0)
-            dataLocation = smGroup.variables['data']
+                smGroup.createVariable(
+                    "data",
+                    "f4",
+                    ("easting", "northing", "depth", "index"),
+                    zlib=True,
+                    complevel=9,
+                    fill_value=0,
+                )
+                smGroup.createVariable(
+                    "minVal", "f4", ("index"), zlib=True, complevel=9, fill_value=0
+                )
+                smGroup.createVariable(
+                    "maxVal", "f4", ("index"), zlib=True, complevel=9, fill_value=0
+                )
+                smGroup.createVariable(
+                    "valid", "S1", ("index"), zlib=True, complevel=9, fill_value=0
+                )
+            dataLocation = smGroup.variables["data"]
             dataLocation[:, :, :, index] = data
-            minValLocation = smGroup.variables['minVal']
+            minValLocation = smGroup.variables["minVal"]
             minValLocation[index] = data.min()
-            maxValLocation = smGroup.variables['maxVal']
+            maxValLocation = smGroup.variables["maxVal"]
             maxValLocation[index] = data.max()
-            validLocation = smGroup.variables['valid']
+            validLocation = smGroup.variables["valid"]
             validLocation[index] = 1
     return response
 
@@ -218,27 +264,27 @@ def SetConfiguration(root, data, verbose=False):
     else:
         smGroup = resp["value"]
 
-    if (data.contains("foliationInterpolator")):
+    if data.contains("foliationInterpolator"):
         smGroup.foliationInterpolator = data.foliationInterpolator
-    if (data.contains("foliationNumElements")):
+    if data.contains("foliationNumElements"):
         smGroup.foliationNumElements = data.foliationNumElements
-    if (data.contains("foliationBuffer")):
+    if data.contains("foliationBuffer"):
         smGroup.foliationBuffer = data.foliationBuffer
-    if (data.contains("foliationSolver")):
+    if data.contains("foliationSolver"):
         smGroup.foliationSolver = data.foliationSolver
-    if (data.contains("foliationDamp")):
+    if data.contains("foliationDamp"):
         smGroup.foliationDamp = data.foliationDamp
-    if (data.contains("faultInterpolator")):
+    if data.contains("faultInterpolator"):
         smGroup.faultInterpolator = data.faultInterpolator
-    if (data.contains("faultNumElements")):
+    if data.contains("faultNumElements"):
         smGroup.faultNumElements = data.faultNumElements
-    if (data.contains("faultDataRegion")):
+    if data.contains("faultDataRegion"):
         smGroup.faultDataRegion = data.faultDataRegion
-    if (data.contains("faultSolver")):
+    if data.contains("faultSolver"):
         smGroup.faultSolver = data.faultSolver
-    if (data.contains("faultCpw")):
+    if data.contains("faultCpw"):
         smGroup.faultCpw = data.faultCpw
-    if (data.contains("faultNpw")):
+    if data.contains("faultNpw"):
         smGroup.faultNpw = data.faultNpw
     return response
 

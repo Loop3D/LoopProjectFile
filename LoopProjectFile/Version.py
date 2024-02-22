@@ -1,4 +1,4 @@
-__version__ = "0.0.25"
+__version__ = "0.0.26"
 
 
 # Current Loop Project File Version
@@ -12,7 +12,7 @@ def LoopVersion():
         List of current version [Major,Minor,Sub]version
 
     """
-    return list(map(int, (__version__.split('.'))))
+    return list(map(int, (__version__.split("."))))
 
 
 # Check version of Loop Project File is valid
@@ -34,16 +34,26 @@ def CheckVersionValid(rootGroup, verbose=False):
         True if valid version in project file, False otherwise.
 
     """
-    if (rootGroup and "loopMajorVersion" in rootGroup.ncattrs()
-            and "loopMinorVersion" in rootGroup.ncattrs()
-            and "loopSubVersion" in rootGroup.ncattrs()):
-        version = [rootGroup.loopMajorVersion,
-                   rootGroup.loopMinorVersion,
-                   rootGroup.loopSubVersion]
+    if (
+        rootGroup
+        and "loopMajorVersion" in rootGroup.ncattrs()
+        and "loopMinorVersion" in rootGroup.ncattrs()
+        and "loopSubVersion" in rootGroup.ncattrs()
+    ):
+        version = [
+            rootGroup.loopMajorVersion,
+            rootGroup.loopMinorVersion,
+            rootGroup.loopSubVersion,
+        ]
         if verbose:
             print(
                 "  Loop Project File version = "
-                + str(version[0]) + "." + str(version[1]) + "." + str(version[2]))
+                + str(version[0])
+                + "."
+                + str(version[1])
+                + "."
+                + str(version[2])
+            )
         return True
     else:
         errStr = "(INVALID) No Version for this project file"
@@ -69,9 +79,24 @@ def GetVersion(rootGroup):
 
     """
     if CheckVersionValid(rootGroup):
-        return {"errorFlag": False, "value": list(map(int, [rootGroup.loopMajorVersion, rootGroup.loopMinorVersion, rootGroup.loopSubVersion]))}
+        return {
+            "errorFlag": False,
+            "value": list(
+                map(
+                    int,
+                    [
+                        rootGroup.loopMajorVersion,
+                        rootGroup.loopMinorVersion,
+                        rootGroup.loopSubVersion,
+                    ],
+                )
+            ),
+        }
     else:
-        return {"errorFlag": True, "errorString": "No valid Version in Loop Project File"}
+        return {
+            "errorFlag": True,
+            "errorString": "No valid Version in Loop Project File",
+        }
 
 
 # Set version on root group

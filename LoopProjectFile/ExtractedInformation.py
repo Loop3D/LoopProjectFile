@@ -1,6 +1,7 @@
 # import netCDF4
 import LoopProjectFile
 import LoopProjectFile.LoopProjectFileUtils as LoopProjectFileUtils
+
 # import numpy
 
 
@@ -45,7 +46,9 @@ def GetStratigraphicInformationGroup(rootGroup, verbose=False):
     if resp["errorFlag"]:
         return resp
     else:
-        return LoopProjectFileUtils.GetGroup(resp["value"], "StratigraphicInformation", verbose)
+        return LoopProjectFileUtils.GetGroup(
+            resp["value"], "StratigraphicInformation", verbose
+        )
 
 
 def GetDrillholeDescriptionGroup(rootGroup, verbose=False):
@@ -53,7 +56,9 @@ def GetDrillholeDescriptionGroup(rootGroup, verbose=False):
     if resp["errorFlag"]:
         return resp
     else:
-        return LoopProjectFileUtils.GetGroup(resp["value"], "DrillholeInformation", verbose)
+        return LoopProjectFileUtils.GetGroup(
+            resp["value"], "DrillholeInformation", verbose
+        )
 
 
 def GetEventLogGroup(rootGroup, verbose=False):
@@ -69,7 +74,9 @@ def GetEventRelationshipsGroup(rootGroup, verbose=False):
     if resp["errorFlag"]:
         return resp
     else:
-        return LoopProjectFileUtils.GetGroup(resp["value"], "EventRelationships", verbose)
+        return LoopProjectFileUtils.GetGroup(
+            resp["value"], "EventRelationships", verbose
+        )
 
 
 def CreateEventLogGroup(extractedInformationGroup):
@@ -82,14 +89,38 @@ def CreateEventLogGroup(extractedInformationGroup):
     elGroup.createDimension("foldEventIndex", None)
     elGroup.createDimension("foliationEventIndex", None)
     elGroup.createDimension("discontinuityEventIndex", None)
-    faultEventType_t = elGroup.createCompoundType(LoopProjectFile.faultEventType, 'FaultEvent')
-    elGroup.createVariable('faultEvents', faultEventType_t, ('faultEventIndex'), zlib=True, complevel=9)
-    foldEventType_t = elGroup.createCompoundType(LoopProjectFile.foldEventType, 'FoldEvent')
-    elGroup.createVariable('foldEvents', foldEventType_t, ('foldEventIndex'), zlib=True, complevel=9)
-    foliationEventType_t = elGroup.createCompoundType(LoopProjectFile.foliationEventType, 'FoliationEvent')
-    elGroup.createVariable('foliationEvents', foliationEventType_t, ('foliationEventIndex'), zlib=True, complevel=9)
-    discontinuityEventType_t = elGroup.createCompoundType(LoopProjectFile.discontinuityEventType, 'DiscontinuityEvent')
-    elGroup.createVariable('discontinuityEvents', discontinuityEventType_t, ('discontinuityEventIndex'), zlib=True, complevel=9)
+    faultEventType_t = elGroup.createCompoundType(
+        LoopProjectFile.faultEventType, "FaultEvent"
+    )
+    elGroup.createVariable(
+        "faultEvents", faultEventType_t, ("faultEventIndex"), zlib=True, complevel=9
+    )
+    foldEventType_t = elGroup.createCompoundType(
+        LoopProjectFile.foldEventType, "FoldEvent"
+    )
+    elGroup.createVariable(
+        "foldEvents", foldEventType_t, ("foldEventIndex"), zlib=True, complevel=9
+    )
+    foliationEventType_t = elGroup.createCompoundType(
+        LoopProjectFile.foliationEventType, "FoliationEvent"
+    )
+    elGroup.createVariable(
+        "foliationEvents",
+        foliationEventType_t,
+        ("foliationEventIndex"),
+        zlib=True,
+        complevel=9,
+    )
+    discontinuityEventType_t = elGroup.createCompoundType(
+        LoopProjectFile.discontinuityEventType, "DiscontinuityEvent"
+    )
+    elGroup.createVariable(
+        "discontinuityEvents",
+        discontinuityEventType_t,
+        ("discontinuityEventIndex"),
+        zlib=True,
+        complevel=9,
+    )
     return elGroup
 
 
@@ -127,22 +158,28 @@ def SetEventLog(root, data, indexName, variableName, append=False, verbose=False
 
 
 def SetFaultLog(root, data, append=False, verbose=False):
-    return SetEventLog(root, data, 'faultEventIndex', 'faultEvents', append, verbose)
+    return SetEventLog(root, data, "faultEventIndex", "faultEvents", append, verbose)
 
 
 def SetFoldLog(root, data, append=False, verbose=False):
-    return SetEventLog(root, data, 'foldEventIndex', 'foldEvents', append, verbose)
+    return SetEventLog(root, data, "foldEventIndex", "foldEvents", append, verbose)
 
 
 def SetFoliationLog(root, data, append=False, verbose=False):
-    return SetEventLog(root, data, 'foliationEventIndex', 'foliationEvents', append, verbose)
+    return SetEventLog(
+        root, data, "foliationEventIndex", "foliationEvents", append, verbose
+    )
 
 
 def SetDiscontinuityLog(root, data, append=False, verbose=False):
-    return SetEventLog(root, data, 'discontinuityEventIndex', 'discontinuityEvents', append, verbose)
+    return SetEventLog(
+        root, data, "discontinuityEventIndex", "discontinuityEvents", append, verbose
+    )
 
 
-def GetEventLog(root, indexName, variableName, indexList=[], indexRange=(0, 0), verbose=False):
+def GetEventLog(
+    root, indexName, variableName, indexList=[], indexRange=(0, 0), verbose=False
+):
     response = {"errorFlag": False}
     resp = GetEventLogGroup(root)
     if resp["errorFlag"]:
@@ -150,10 +187,17 @@ def GetEventLog(root, indexName, variableName, indexList=[], indexRange=(0, 0), 
     else:
         elGroup = resp["value"]
         data = []
-        maxValidIndex = min(elGroup.dimensions[indexName].size, elGroup.getncattr(indexName + "_MaxValid"))
+        maxValidIndex = min(
+            elGroup.dimensions[indexName].size,
+            elGroup.getncattr(indexName + "_MaxValid"),
+        )
         # Select all option
-        if (indexList == [] and len(indexRange) == 2 and indexRange[0] == 0
-                and indexRange[1] == 0):
+        if (
+            indexList == []
+            and len(indexRange) == 2
+            and indexRange[0] == 0
+            and indexRange[1] == 0
+        ):
             # Select all
             for i in range(0, maxValidIndex):
                 data.append((elGroup.variables.get(variableName)[i]))
@@ -165,7 +209,11 @@ def GetEventLog(root, indexName, variableName, indexList=[], indexRange=(0, 0), 
                     data.append((elGroup.variables.get(variableName)[i]))
             response["value"] = data
         # Select based on indices range option
-        elif len(indexRange) == 2 and indexRange[0] >= 0 and indexRange[1] >= indexRange[0]:
+        elif (
+            len(indexRange) == 2
+            and indexRange[0] >= 0
+            and indexRange[1] >= indexRange[0]
+        ):
             for i in range(indexRange[0], indexRange[1]):
                 if int(i) >= 0 and int(i) < maxValidIndex:
                     data.append((elGroup.variables.get(variableName)[i]))
@@ -179,19 +227,32 @@ def GetEventLog(root, indexName, variableName, indexList=[], indexRange=(0, 0), 
 
 
 def GetFaultLog(root, indexList=[], indexRange=(0, 0), verbose=False):
-    return GetEventLog(root, 'faultEventIndex', 'faultEvents', indexList, indexRange, verbose)
+    return GetEventLog(
+        root, "faultEventIndex", "faultEvents", indexList, indexRange, verbose
+    )
 
 
 def GetFoldLog(root, indexList=[], indexRange=(0, 0), verbose=False):
-    return GetEventLog(root, 'foldEventIndex', 'foldEvents', indexList, indexRange, verbose)
+    return GetEventLog(
+        root, "foldEventIndex", "foldEvents", indexList, indexRange, verbose
+    )
 
 
 def GetFoliationLog(root, indexList=[], indexRange=(0, 0), verbose=False):
-    return GetEventLog(root, 'foliationEventIndex', 'foliationEvents', indexList, indexRange, verbose)
+    return GetEventLog(
+        root, "foliationEventIndex", "foliationEvents", indexList, indexRange, verbose
+    )
 
 
 def GetDiscontinuityLog(root, indexList=[], indexRange=(0, 0), verbose=False):
-    return GetEventLog(root, 'discontinuityEventIndex', 'discontinuityEvents', indexList, indexRange, verbose)
+    return GetEventLog(
+        root,
+        "discontinuityEventIndex",
+        "discontinuityEvents",
+        indexList,
+        indexRange,
+        verbose,
+    )
 
 
 # Set stratigraphic log
@@ -231,16 +292,24 @@ def SetStratigraphicLog(root, data, append=False, verbose=False):
         siGroup = eiGroup.createGroup("StratigraphicInformation")
         siGroup.setncattr("index_MaxValid", -1)
         siGroup.createDimension("index", None)
-        stratigraphicLayerType_t = siGroup.createCompoundType(LoopProjectFile.stratigraphicLayerType, 'StratigraphicLayer')
-        siGroup.createVariable('stratigraphicLayers', stratigraphicLayerType_t, ('index'), zlib=True, complevel=9)
+        stratigraphicLayerType_t = siGroup.createCompoundType(
+            LoopProjectFile.stratigraphicLayerType, "StratigraphicLayer"
+        )
+        siGroup.createVariable(
+            "stratigraphicLayers",
+            stratigraphicLayerType_t,
+            ("index"),
+            zlib=True,
+            complevel=9,
+        )
     else:
         siGroup = resp["value"]
 
     if siGroup:
-        stratigraphicLayersLocation = siGroup.variables['stratigraphicLayers']
+        stratigraphicLayersLocation = siGroup.variables["stratigraphicLayers"]
         index = 0
         if append:
-            index = siGroup.dimensions['index'].size
+            index = siGroup.dimensions["index"].size
         for i in data:
             stratigraphicLayersLocation[index] = i
             index += 1
@@ -261,25 +330,35 @@ def GetStratigraphicLog(root, indexList=[], indexRange=(0, 0), verbose=False):
     else:
         siGroup = resp["value"]
         data = []
-        maxValidIndex = min(siGroup.dimensions['index'].size, siGroup.getncattr("index_MaxValid"))
+        maxValidIndex = min(
+            siGroup.dimensions["index"].size, siGroup.getncattr("index_MaxValid")
+        )
         # Select all option
-        if (indexList == [] and len(indexRange) == 2 and indexRange[0] == 0
-                and indexRange[1] == 0):
+        if (
+            indexList == []
+            and len(indexRange) == 2
+            and indexRange[0] == 0
+            and indexRange[1] == 0
+        ):
             # Select all
             for i in range(0, maxValidIndex):
-                data.append((siGroup.variables.get('stratigraphicLayers')[i]))
+                data.append((siGroup.variables.get("stratigraphicLayers")[i]))
             response["value"] = data
         # Select based on list of indices option
         elif indexList != []:
             for i in indexList:
                 if int(i) >= 0 and int(i) < maxValidIndex:
-                    data.append((siGroup.variables.get('stratigraphicLayers')[i]))
+                    data.append((siGroup.variables.get("stratigraphicLayers")[i]))
             response["value"] = data
         # Select based on indices range option
-        elif len(indexRange) == 2 and indexRange[0] >= 0 and indexRange[1] >= indexRange[0]:
+        elif (
+            len(indexRange) == 2
+            and indexRange[0] >= 0
+            and indexRange[1] >= indexRange[0]
+        ):
             for i in range(indexRange[0], indexRange[1]):
                 if int(i) >= 0 and int(i) < maxValidIndex:
-                    data.append((siGroup.variables.get('stratigraphicLayers')[i]))
+                    data.append((siGroup.variables.get("stratigraphicLayers")[i]))
             response["value"] = data
         else:
             errStr = "Non-implemented filter option"
@@ -326,16 +405,24 @@ def SetDrillholeLog(root, data, append=False, verbose=False):
         diGroup = eiGroup.createGroup("DrillholeInformation")
         diGroup.setncattr("index_MaxValid", -1)
         diGroup.createDimension("index", None)
-        drillholeDescriptionType_t = diGroup.createCompoundType(LoopProjectFile.drillholeDescriptionType, 'DrillholeDescription')
-        diGroup.createVariable('drillholeDescriptions', drillholeDescriptionType_t, ('index'), zlib=True, complevel=9)
+        drillholeDescriptionType_t = diGroup.createCompoundType(
+            LoopProjectFile.drillholeDescriptionType, "DrillholeDescription"
+        )
+        diGroup.createVariable(
+            "drillholeDescriptions",
+            drillholeDescriptionType_t,
+            ("index"),
+            zlib=True,
+            complevel=9,
+        )
     else:
         diGroup = resp["value"]
 
     if diGroup:
-        drillholeDescriptionsLocation = diGroup.variables['drillholeDescriptions']
+        drillholeDescriptionsLocation = diGroup.variables["drillholeDescriptions"]
         index = 0
         if append:
-            index = diGroup.dimensions['index'].size
+            index = diGroup.dimensions["index"].size
         for i in data:
             drillholeDescriptionsLocation[index] = i
             index += 1
@@ -356,25 +443,35 @@ def GetDrillholeLog(root, indexList=[], indexRange=(0, 0), verbose=False):
     else:
         diGroup = resp["value"]
         data = []
-        maxValidIndex = min(diGroup.dimensions['index'].size, diGroup.getncattr("index_MaxValid"))
+        maxValidIndex = min(
+            diGroup.dimensions["index"].size, diGroup.getncattr("index_MaxValid")
+        )
         # Select all option
-        if (indexList == [] and len(indexRange) == 2 and indexRange[0] == 0
-                and indexRange[1] == 0):
+        if (
+            indexList == []
+            and len(indexRange) == 2
+            and indexRange[0] == 0
+            and indexRange[1] == 0
+        ):
             # Select all
             for i in range(0, maxValidIndex):
-                data.append((diGroup.variables.get('drillholeDescriptions')[i]))
+                data.append((diGroup.variables.get("drillholeDescriptions")[i]))
             response["value"] = data
         # Select based on list of indices option
         elif indexList != []:
             for i in indexList:
                 if int(i) >= 0 and int(i) < maxValidIndex:
-                    data.append((diGroup.variables.get('drillholeDescriptions')[i]))
+                    data.append((diGroup.variables.get("drillholeDescriptions")[i]))
             response["value"] = data
         # Select based on indices range option
-        elif len(indexRange) == 2 and indexRange[0] >= 0 and indexRange[1] >= indexRange[0]:
+        elif (
+            len(indexRange) == 2
+            and indexRange[0] >= 0
+            and indexRange[1] >= indexRange[0]
+        ):
             for i in range(indexRange[0], indexRange[1]):
                 if int(i) >= 0 and int(i) < maxValidIndex:
-                    data.append((diGroup.variables.get('drillholeDescriptions')[i]))
+                    data.append((diGroup.variables.get("drillholeDescriptions")[i]))
             response["value"] = data
         else:
             errStr = "Non-implemented filter option"
@@ -398,16 +495,24 @@ def SetEventRelationships(root, data, append=False, verbose=False):
         erGroup = eiGroup.createGroup("EventRelationships")
         erGroup.setncattr("index_MaxValid", -1)
         erGroup.createDimension("index", None)
-        eventRelationshipType_t = erGroup.createCompoundType(LoopProjectFile.eventRelationshipType, 'EventRelationship')
-        erGroup.createVariable('eventRelationships', eventRelationshipType_t, ('index'), zlib=True, complevel=9)
+        eventRelationshipType_t = erGroup.createCompoundType(
+            LoopProjectFile.eventRelationshipType, "EventRelationship"
+        )
+        erGroup.createVariable(
+            "eventRelationships",
+            eventRelationshipType_t,
+            ("index"),
+            zlib=True,
+            complevel=9,
+        )
     else:
         erGroup = resp["value"]
 
     if erGroup:
-        eventRelationshipsLocation = erGroup.variables['eventRelationships']
+        eventRelationshipsLocation = erGroup.variables["eventRelationships"]
         index = 0
         if append:
-            index = erGroup.dimensions['index'].size
+            index = erGroup.dimensions["index"].size
         for i in data:
             eventRelationshipsLocation[index] = i
             index += 1
@@ -427,9 +532,11 @@ def GetEventRelationships(root, verbose=False):
         response = resp
     else:
         erGroup = resp["value"]
-        maxValidIndex = min(erGroup.dimensions['index'].size, erGroup.getncattr("index_MaxValid"))
+        maxValidIndex = min(
+            erGroup.dimensions["index"].size, erGroup.getncattr("index_MaxValid")
+        )
         data = []
         for i in range(0, maxValidIndex):
-            data.append((erGroup.variables.get('eventRelationships')[i]))
+            data.append((erGroup.variables.get("eventRelationships")[i]))
         response["value"] = data
     return response

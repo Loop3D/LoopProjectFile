@@ -30,5 +30,5 @@ setup(
         "Topic :: Scientific/Engineering :: GIS",
     ],
     version=version,
-    packages=find_packages()
-    )
+    packages=find_packages(),
+)
