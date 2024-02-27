@@ -637,3 +637,7 @@ def handleCSVlist(files, loopFilename, shared_path="/shared"):
                 print(f"Failed to delete CSV file {csv_file}: {e}")
 
     return "success", f"{loopFilename} is created and saved successfully"
+
+def map_colors_to_contacts(contacts: pandas.DataFrame, stratigraphicLog: pandas.DataFrame) -> pandas.DataFrame:
+    contacts = contacts.merge(stratigraphicLog[['layerId', 'colour1Red', 'colour1Green','colour1Blue']], on='layerId',how='left')
+    return contacts
