@@ -116,9 +116,7 @@ class ProjectFile:
         """
         df["name"] = "none"
         for stratigraphic_id in log.index:
-            df.loc[df["layerId"] == stratigraphic_id, "name"] = log.loc[
-                stratigraphic_id, "name"
-            ]
+            df.loc[df["layerId"] == stratigraphic_id, "name"] = log.loc[stratigraphic_id, "name"]
 
     @property
     def extents(self) -> np.ndarray:
@@ -324,10 +322,7 @@ class ProjectFile:
             raise TypeError("stratigraphyLocations must be set with a pandas dataframe")
         self._validate_data_frame_columns(
             value,
-            {
-                k: False
-                for k in ["layerId", "easting", "northing", "altitude", "type", "name"]
-            },
+            {k: False for k in ["layerId", "easting", "northing", "altitude", "type", "name"]},
         )
         self.__setitem__("contacts", value)
 
@@ -340,9 +335,7 @@ class ProjectFile:
     @stratigraphyOrientations.setter
     def stratigraphyOrientations(self, value: pd.DataFrame):
         if isinstance(value, pd.DataFrame) is False:
-            raise TypeError(
-                "stratigraphyOrientations must be set with a pandas dataframe"
-            )
+            raise TypeError("stratigraphyOrientations must be set with a pandas dataframe")
         self._validate_data_frame_columns(
             value,
             {
@@ -380,6 +373,13 @@ class ProjectFile:
             if (
                 resp["errorString"]
                 == "No Observations present in DataCollection for access request"
+            ):
+                # TODO: this isn't really ideal and maybe need to be removed but at least it gives an idea of the column
+                # names needed.
+                return pd.DataFrame(columns=list(compoundTypeMap[element].names))
+            if (
+                resp["errorString"]
+                == "No EventLog present in ExtractedInformation for access request"
             ):
                 # TODO: this isn't really ideal and maybe need to be removed but at least it gives an idea of the column
                 # names needed.
