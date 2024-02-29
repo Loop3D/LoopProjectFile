@@ -287,7 +287,7 @@ def ElementToDataframe(loopFilename, element, loopCompoundType):
         df = pandas.DataFrame.from_records(resp["value"], columns=columns)
         for name in columns:
             df[name] = df[name].astype(loopCompoundType[name])
-        df = df.applymap(lambda x: x.decode() if isinstance(x, bytes) else x)
+        df = df.map(lambda x: x.decode() if isinstance(x, bytes) else x)
         # df.set_index(columns[0], inplace=True)
         return df  # .to_csv(outputFilename)
 
@@ -364,9 +364,7 @@ def ToCsv(loopFilename, outputPath):
         print("    utm zone:", str(resp["value"]["utm"][0]) + utmNorthSouth)
         print("    easting: ", resp["value"]["utm"][2], "-", resp["value"]["utm"][3])
         print("    northing:", resp["value"]["utm"][4], "-", resp["value"]["utm"][5])
-        print(
-            "    altitude:", resp["value"]["depth"][0], "-", resp["value"]["depth"][1]
-        )
+        print("    altitude:", resp["value"]["depth"][0], "-", resp["value"]["depth"][1])
         columns = [
             "minLong",
             "maxLong",
@@ -440,9 +438,7 @@ def ToCsv(loopFilename, outputPath):
         "foliationLog",
         LoopProjectFile.foliationEventType,
     )
-    print(
-        "  Exporting foliation observations into", str(outputPath) + "foliationObs.csv"
-    )
+    print("  Exporting foliation observations into", str(outputPath) + "foliationObs.csv")
     ElementToCsv(
         loopFilename,
         outputPath + "foliationObs.csv",
