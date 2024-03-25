@@ -39,7 +39,7 @@ Documentation = 'https://Loop3d.org/LoopProjectFile/'
 "Source Code" = 'https://github.com/loop3d/LoopProjectFile'
 
 [tool.setuptools.dynamic]
-version = { attr = 'LoopProjectFile.version.__version__' }
+version = { attr = 'LoopProjectFile.Version.__version__' }
 
 [tool.setuptools.packages.find]
 include = ['LoopProjectFile']
