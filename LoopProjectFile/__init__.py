@@ -22,8 +22,6 @@ from .LoopProjectFile import (
     drillholePropertyType,
     ConvertDataFrame,
     ConvertToDataFrame,
-    EventType,
-    EventRelationshipType,
     CheckFileIsLoopProjectFile,
 )  # noqa : F401
 from .Permutations import (
@@ -33,6 +31,11 @@ from .Permutations import (
     CalcPermutation,
     checkBrokenRules,
     checkBrokenEventRules,
+)  # noqa : F401
+from .LoopProjectFileEnums import (
+    EventType,
+    EventRelationshipType,
+    ThicknessCalculatorType,
 )  # noqa : F401
 from .LoopProjectFileUtils import (
     ToCsv,

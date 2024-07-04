@@ -37,6 +37,7 @@ import os
 import enum
 
 import netCDF4
+from .LoopProjectFileEnums import ThicknessCalculatorType
 import LoopProjectFile.Version as Version
 import LoopProjectFile.Extents as Extents
 import LoopProjectFile.StructuralModels as StructuralModels
@@ -44,31 +45,6 @@ import LoopProjectFile.DataCollection as DataCollection
 import LoopProjectFile.ExtractedInformation as ExtractedInformation
 import LoopProjectFile.GeophysicalModels as GeophysicalModels
 import LoopProjectFile.ProbabilityModels as ProbabilityModels
-
-
-class EventType(enum.IntEnum):
-    INVALIDEVENT = (-1,)
-    FAULTEVENT = (0,)
-    FOLDEVENT = (1,)
-    FOLIATIONSEVENT = (2,)
-    DISCONTINUITYEVENT = (3,)
-    STRATIGRAPHICLAYER = 4
-
-
-class EventRelationshipType(enum.IntEnum):
-    INVALIDTYPE = -1
-    STRATA_STRATA = 0
-    FAULT_STRATA = 1
-    FAULT_FAULT_SPLAY = 2
-    FAULT_FAULT_ABUT = 3
-    FAULT_FAULT_OVERPRINT = 4
-
-class ThickenessCalculatorType(enum.IntEnum):
-    ALPHA = 0
-    INTERPOLATED_STRUCTURE = 1
-    STRUCTURAL_POINT = 2
-    PLACEHOLDER_1 = 3
-    PLACEHOLDER_2 = 4
 
 # ###  External Accessors ### #
 
@@ -739,9 +715,9 @@ stratigraphicLayerType = numpy.dtype(
         ("group", "S120"),
         ("supergroup", "S120"),
         ("enabled", "u1"),
-        ("ThicknessMean", "<f8", (len(ThickenessCalculatorType)), ),
-        ("ThicknessMedian", "<f8", (len(ThickenessCalculatorType)), ),
-        ("ThicknessStdDev", "<f8", (len(ThickenessCalculatorType)), ),
+        ("ThicknessMean", "<f8", (len(ThicknessCalculatorType)), ),
+        ("ThicknessMedian", "<f8", (len(ThicknessCalculatorType)), ),
+        ("ThicknessStdDev", "<f8", (len(ThicknessCalculatorType)), ),
         ("colour1Red", "u1"),
         ("colour1Green", "u1"),
         ("colour1Blue", "u1"),
