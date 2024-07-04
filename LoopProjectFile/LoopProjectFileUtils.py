@@ -4,7 +4,7 @@ import os
 import sys
 import numpy
 import LoopProjectFile
-
+from .LoopProjectFileEnums import ThicknessCalculatorType
 
 def GetGroup(node, groupName, verbose=False):
     """
@@ -280,7 +280,12 @@ def FromCsv(loopFilename, importPath, overwrite=False):
     return "All CSV files processed successfully"
 
 
-def ElementToDataframe(loopFilename, element, loopCompoundType):
+def ElementToDataframe(
+        loopFilename,
+        element,
+        loopCompoundType,
+        startigraphicLogThickness=ThicknessCalculatorType.ALPHA
+    ):
     """
     **ElementToCsv** - Exports one element of the loop project file
     to a csv file outputFilename
@@ -293,6 +298,9 @@ def ElementToDataframe(loopFilename, element, loopCompoundType):
         The name of the element to extract
     loopCompoundType: numpy.compoundType
         The numpy data structure that the element is stored in
+    stratigraphicLogThickness: ThicknessCalculatorType
+        If the element is a stratigraphicLog which thickness calculator
+        output is used in the generic thickness field
 
     Returns
     -------
@@ -310,6 +318,8 @@ def ElementToDataframe(loopFilename, element, loopCompoundType):
                 df[name] = df[name].astype(loopCompoundType[name])
         df = df.map(lambda x: x.decode() if isinstance(x, bytes) else x)
         # df.set_index(columns[0], inplace=True)
+        if element == "stratigraphicLog":
+            df["thickness"] = df.ThicknessMedian.map(lambda x: x[startigraphicLogThickness])
         return df  # .to_csv(outputFilename)
 
 

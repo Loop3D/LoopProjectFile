@@ -34,7 +34,6 @@ import pandas
 
 import sys
 import os
-import enum
 
 import netCDF4
 from .LoopProjectFileEnums import ThicknessCalculatorType
