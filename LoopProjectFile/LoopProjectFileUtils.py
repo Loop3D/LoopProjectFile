@@ -3,7 +3,8 @@ import pandas
 import os
 import sys
 import LoopProjectFile
-
+import mplstereonet
+import numpy as np
 
 def GetGroup(node, groupName, verbose=False):
     """
@@ -637,3 +638,16 @@ def handleCSVlist(files, loopFilename, shared_path="/shared"):
 def map_colors_to_contacts(contacts: pandas.DataFrame, stratigraphicLog: pandas.DataFrame) -> pandas.DataFrame:
     contacts = contacts.merge(stratigraphicLog[['layerId', 'colour1Red', 'colour1Green','colour1Blue']], on='layerId',how='left')
     return contacts
+
+def compute_girdle_fit(dipDirs, dips):
+    dipDirs = np.array(dipDirs, dtype=np.float64)
+    dips = np.array(dips, dtype=np.float64)
+    strikes = np.array([(dipDir - 90) % 360 for dipDir in dipDirs], dtype=np.float64)
+    fit_strike, fit_dip = mplstereonet.fit_girdle(strikes, dips)
+    (plunge,), (bearing,) = mplstereonet.pole2plunge_bearing(fit_strike, fit_dip)
+    return {
+        "fit_strike": float(fit_strike),
+        "fit_dip": float(fit_dip),
+        "plunge": float(plunge),
+        "bearing": float(bearing)
+    }
