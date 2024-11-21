@@ -26,7 +26,7 @@ jobs:
   #         commit_message: "style: style fixes by ruff and autoformatting by black"
           
 
-  p
+  
     
   pip-build-wheels:
     needs: pip-test-sdist
