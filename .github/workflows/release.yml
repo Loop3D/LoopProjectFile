@@ -78,7 +78,7 @@ jobs:
       - name: Build Wheels
         run: |
           python -m pip install --upgrade pip
-          pip install netCDF4>=1.5.4 --only-binary :all:
+          pip install netCDF4>=1.5.4 
           pip install build numpy pandas pytest
           python -m build --wheel
 
