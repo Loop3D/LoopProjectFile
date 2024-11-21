@@ -35,8 +35,7 @@ jobs:
       fail-fast: false
       matrix:
         os: 
-          - ["ubuntu-latest","macosx-latest","windows-latest"]
-
+          - [ubuntu-latest, windows-latest,macosx-latext]
     steps:
       - uses: actions/checkout@v4
 
