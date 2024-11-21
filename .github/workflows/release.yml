@@ -29,7 +29,6 @@ jobs:
   
     
   pip-build-wheels:
-    needs: pip-test-sdist
     name: Build Wheels
     runs-on: ${{ matrix.os }}
     strategy:
