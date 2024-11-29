@@ -63,15 +63,6 @@ class EventRelationshipType(enum.IntEnum):
     FAULT_FAULT_ABUT = 3
     FAULT_FAULT_OVERPRINT = 4
 
-class ThickenessCalculatorType(enum.IntEnum):
-    ALPHA = 0
-    INTERPOLATED_STRUCTURE = 1
-    STRUCTURAL_POINT = 2
-    PLACEHOLDER_1 = 3
-    PLACEHOLDER_2 = 4
-
-# ###  External Accessors ### #
-
 
 # Create a basic loop project file if no file already exists
 def CreateBasic(filename):
@@ -141,7 +132,7 @@ def OpenProjectFile(filename, readOnly=True, verbose=False):
 
     # Quick check to see if openable
     try:
-        with open(filename, 'rb') as f:
+        with open(filename, 'rb'):
             if (verbose):
                 print(f"File {filename} opened successfully.", file=sys.stderr)
     except Exception as e:
@@ -295,6 +286,12 @@ def Set(filename, element, **kwargs):
                 response = ExtractedInformation.SetStratigraphicLog(
                     root, append=True, **kwargs
                 )
+            elif element == "stratigraphicThicknesses":
+                response = ExtractedInformation.SetStratigraphicThicknesses(root, **kwargs)
+            elif element == "stratigraphicThicknessCalculatorLabels":
+                response = ExtractedInformation.SetStratigraphicThicknessCalculatorLabels(root, **kwargs)
+                
+                
             elif element == "faultLog":
                 response = ExtractedInformation.SetFaultLog(root, **kwargs)
             elif element == "faultLogAppend":
@@ -432,6 +429,10 @@ def Get(filename, element, **kwargs):
                 response = DataCollection.GetDrillholeProperties(root, **kwargs)
             elif element == "stratigraphicLog":
                 response = ExtractedInformation.GetStratigraphicLog(root, **kwargs)
+            elif element == "stratigraphicThicknesses":
+                response = ExtractedInformation.GetStratigraphicThicknesses(root, **kwargs)
+            elif element == "stratigraphicThicknessCalculatorLabels":
+                response = ExtractedInformation.GetStratigraphicThicknessCalculatorLabels(root, **kwargs)
             elif element == "faultLog":
                 response = ExtractedInformation.GetFaultLog(root, **kwargs)
             elif element == "foldLog":
@@ -499,6 +500,7 @@ def CheckValidElements(filename, verbose=False):
         "drillholeSurveys": False,
         "drillholeProperties": False,
         "stratigraphicLog": False,
+        "stratigraphicThicknesses": False,
         "faultLog": False,
         "foldLog": False,
         "foliationLog": False,
@@ -739,9 +741,9 @@ stratigraphicLayerType = numpy.dtype(
         ("group", "S120"),
         ("supergroup", "S120"),
         ("enabled", "u1"),
-        ("ThicknessMean", "<f8", (len(ThickenessCalculatorType)), ),
-        ("ThicknessMedian", "<f8", (len(ThickenessCalculatorType)), ),
-        ("ThicknessStdDev", "<f8", (len(ThickenessCalculatorType)), ),
+        ("ThicknessMean", "<f8"),
+        ("ThicknessMedian", "<f8"),
+        ("ThicknessStdDev", "<f8"),
         ("colour1Red", "u1"),
         ("colour1Green", "u1"),
         ("colour1Blue", "u1"),
@@ -750,6 +752,33 @@ stratigraphicLayerType = numpy.dtype(
         ("colour2Blue", "u1"),
     ]
 )
+stratigraphicThicknessType = numpy.dtype(
+    [
+        ('name', 'S120'),
+        ('thickness1_mean', '<f8'),
+        ('thickness1_median', '<f8'),
+        ('thickness1_stddev', '<f8'),
+        ('thickness2_mean', '<f8'),
+        ('thickness2_median', '<f8'),
+        ('thickness2_stddev', '<f8'),
+        ('thickness3_mean', '<f8'),
+        ('thickness3_median', '<f8'),
+        ('thickness3_stddev', '<f8'),
+        ('thickness4_mean', '<f8'),
+        ('thickness4_median', '<f8'),
+        ('thickness4_stddev', '<f8'),
+        ('thickness5_mean', '<f8'),
+        ('thickness5_median', '<f8'),
+        ('thickness5_stddev', '<f8'),
+    ]
+)
+thicknessCalculatorType = numpy.dtype([
+    ("name1", "S120"),
+    ("name2", "S120"),
+    ("name3", "S120"),
+    ("name4", "S120"),
+    ("name5", "S120")
+])
 
 eventRelationshipType = numpy.dtype(
     [
@@ -809,7 +838,7 @@ def ConvertDataFrame(df, dtype):
     if isinstance(df, pandas.DataFrame):
         return numpy.array(df.to_records(index=False).tolist(), dtype=dtype)
     else:
-        raise NotADataFrame
+        raise TypeError("Input is not a DataFrame")
 
 
 def CheckFileIsLoopProjectFile(filename, verbose=False):

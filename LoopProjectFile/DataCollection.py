@@ -79,7 +79,8 @@ def CreateObservationGroup(dataCollectionGroup):
     obGroup.createDimension("foldObservationIndex", None)
     obGroup.createDimension("foliationObservationIndex", None)
     obGroup.createDimension("discontinuityObservationIndex", None)
-    obGroup.createDimension("stratigraphicObservationIndex", None)
+    obGroup.createDimension("stratigraphicObservationIndex", None)    
+    
     faultObservationType_t = obGroup.createCompoundType(
         LoopProjectFile.faultObservationType, "FaultObservation"
     )

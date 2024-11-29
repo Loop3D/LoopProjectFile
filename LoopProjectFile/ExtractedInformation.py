@@ -2,7 +2,6 @@
 import LoopProjectFile
 import LoopProjectFile.LoopProjectFileUtils as LoopProjectFileUtils
 
-# import numpy
 
 
 # Check Extracted Information valid if present
@@ -49,6 +48,14 @@ def GetStratigraphicInformationGroup(rootGroup, verbose=False):
         return LoopProjectFileUtils.GetGroup(
             resp["value"], "StratigraphicInformation", verbose
         )
+
+
+def GetStratigraphicThicknessGroup(rootGroup, verbose=False):
+    resp = GetExtractedInformationGroup(rootGroup, verbose)
+    if resp["errorFlag"]:
+        return resp
+    else:
+        return LoopProjectFileUtils.GetGroup(resp["value"], "StratigraphicThickness", verbose)
 
 
 def GetDrillholeDescriptionGroup(rootGroup, verbose=False):
@@ -255,8 +262,12 @@ def GetDiscontinuityLog(root, indexList=[], indexRange=(0, 0), verbose=False):
     )
 
 
-# Set stratigraphic log
-def SetStratigraphicLog(root, data, append=False, verbose=False):
+def SetStratigraphicLog(
+    root, 
+    data, 
+    append=False, 
+    verbose=False
+):
     """
     **SetStratigraphicLog** - Saves a list of strata in (formation,
     thickness) format into the netCDF Loop Project File
@@ -267,6 +278,10 @@ def SetStratigraphicLog(root, data, append=False, verbose=False):
         The root group node of a Loop Project File
     data: list of (formation, thickness)
         The data to save
+    thickness_calculator_data: list of tuples
+        Labels for thickness calculators (e.g., [('Label1', 'Label2', ...)])
+    thickness_calculator_active_flags: list of tuples
+        Flags for active thickness calculators (e.g., [('None', 'Active', ...)])
     append: bool
         Flag of whether to append new data to existing log
     verbose: bool
@@ -274,8 +289,8 @@ def SetStratigraphicLog(root, data, append=False, verbose=False):
 
     Returns
     -------
-       dict {"errorFlag", "errorString"}
-        errorString exist and contains error message only when errorFlag is
+    dict {"errorFlag", "errorString"}
+        errorString exists and contains error message only when errorFlag is
         True
 
     """
@@ -302,11 +317,13 @@ def SetStratigraphicLog(root, data, append=False, verbose=False):
             zlib=True,
             complevel=9,
         )
+
     else:
         siGroup = resp["value"]
 
     if siGroup:
         stratigraphicLayersLocation = siGroup.variables["stratigraphicLayers"]
+
         index = 0
         if append:
             index = siGroup.dimensions["index"].size
@@ -314,11 +331,14 @@ def SetStratigraphicLog(root, data, append=False, verbose=False):
             stratigraphicLayersLocation[index] = i
             index += 1
         siGroup.setncattr("index_MaxValid", index)
+
+
     else:
         errStr = "(ERROR) Failed to create stratigraphic log group for strata setting"
         if verbose:
             print(errStr)
         response = {"errorFlag": True, "errorString": errStr}
+
     return response
 
 
@@ -330,16 +350,9 @@ def GetStratigraphicLog(root, indexList=[], indexRange=(0, 0), verbose=False):
     else:
         siGroup = resp["value"]
         data = []
-        maxValidIndex = min(
-            siGroup.dimensions["index"].size, siGroup.getncattr("index_MaxValid")
-        )
+        maxValidIndex = min(siGroup.dimensions["index"].size, siGroup.getncattr("index_MaxValid"))
         # Select all option
-        if (
-            indexList == []
-            and len(indexRange) == 2
-            and indexRange[0] == 0
-            and indexRange[1] == 0
-        ):
+        if indexList == [] and len(indexRange) == 2 and indexRange[0] == 0 and indexRange[1] == 0:
             # Select all
             for i in range(0, maxValidIndex):
                 data.append((siGroup.variables.get("stratigraphicLayers")[i]))
@@ -351,14 +364,95 @@ def GetStratigraphicLog(root, indexList=[], indexRange=(0, 0), verbose=False):
                     data.append((siGroup.variables.get("stratigraphicLayers")[i]))
             response["value"] = data
         # Select based on indices range option
-        elif (
-            len(indexRange) == 2
-            and indexRange[0] >= 0
-            and indexRange[1] >= indexRange[0]
-        ):
+        elif len(indexRange) == 2 and indexRange[0] >= 0 and indexRange[1] >= indexRange[0]:
             for i in range(indexRange[0], indexRange[1]):
                 if int(i) >= 0 and int(i) < maxValidIndex:
                     data.append((siGroup.variables.get("stratigraphicLayers")[i]))
+            response["value"] = data
+        else:
+            errStr = "Non-implemented filter option"
+            if verbose:
+                print(errStr)
+            response = {"errorFlag": True, "errorString": errStr}
+    return response
+
+
+def SetStratigraphicThicknesses(root, data, headers=None,ncols=None,append=False, verbose=False):
+    response = {"errorFlag": False}
+    resp = GetExtractedInformationGroup(root)
+    if resp["errorFlag"]:
+        # Create Extracted Information Group as it doesn't exist
+        eiGroup = root.createGroup("ExtractedInformation")
+    else:
+        eiGroup = resp["value"]
+
+    resp = GetStratigraphicThicknessGroup(root)
+    if resp["errorFlag"]:
+        stGroup = eiGroup.createGroup("StratigraphicThickness")
+        stGroup.setncattr("index_MaxValid", -1)
+        stGroup.createDimension("index", None)
+        stratigraphicThicknessType_t = stGroup.createCompoundType(
+            LoopProjectFile.stratigraphicThicknessType, "stratigraphicThickness"
+        )
+        stGroup.createVariable(
+            "stratigraphicThicknesses",
+            stratigraphicThicknessType_t,
+            ("index"),
+            zlib=True,
+            complevel=9,
+        )
+    else:
+        stGroup = resp["value"]
+
+    if stGroup:
+        stratigraphicThicknesses = stGroup.variables["stratigraphicThicknesses"]
+        if headers:
+            stGroup.setncattr("headers", headers)
+        if ncols:
+            stGroup.setncattr("ncols", ncols)
+        index = 0
+        if append:
+            index = stGroup.dimensions["index"].size
+        for i in data:
+            stratigraphicThicknesses[index] = i
+            index += 1
+        stGroup.setncattr("index_MaxValid", index)
+    else:
+        errStr = "(ERROR) Failed to create stratigraphic log group for strata setting"
+        if verbose:
+            print(errStr)
+        response = {"errorFlag": True, "errorString": errStr}
+
+    return response
+
+
+def GetStratigraphicThicknesses(root, indexList=[], indexRange=(0, 0), verbose=False):
+    response = {"errorFlag": False}
+    resp = GetStratigraphicThicknessGroup(root)
+    if resp["errorFlag"]:
+        response = resp
+    else:
+        siGroup = resp["value"]
+        data = []
+        maxValidIndex = min(siGroup.dimensions["index"].size, siGroup.getncattr("index_MaxValid"))
+        # Select all option
+        response['attributes'] = {a:siGroup.getncattr(a) for a in siGroup.ncattrs()}
+        if indexList == [] and len(indexRange) == 2 and indexRange[0] == 0 and indexRange[1] == 0:
+            # Select all
+            for i in range(0, maxValidIndex):
+                data.append((siGroup.variables.get("stratigraphicThicknesses")[i]))
+            response["value"] = data
+        # Select based on list of indices option
+        elif indexList != []:
+            for i in indexList:
+                if int(i) >= 0 and int(i) < maxValidIndex:
+                    data.append((siGroup.variables.get("stratigraphicThicknesses")[i]))
+            response["value"] = data
+        # Select based on indices range option
+        elif len(indexRange) == 2 and indexRange[0] >= 0 and indexRange[1] >= indexRange[0]:
+            for i in range(indexRange[0], indexRange[1]):
+                if int(i) >= 0 and int(i) < maxValidIndex:
+                    data.append((siGroup.variables.get("stratigraphicThicknesses")[i]))
             response["value"] = data
         else:
             errStr = "Non-implemented filter option"

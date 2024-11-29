@@ -86,13 +86,12 @@ quiet-level = 3
 
 [tool.ruff]
 exclude = ['.git', 'pycache__', 'build', 'dist', 'doc/examples', 'doc/_build']
-external = ["E131", "D102", "D105"]
+lint.external = ["E131", "D102", "D105"]
 line-length = 100
 indent-width = 4
 target-version = 'py39'
 
-[tool.ruff.lint]
-ignore = [
+lint.ignore = [
     # whitespace before ':'
     "E203",
     # line break before binary operator
@@ -117,9 +116,9 @@ ignore = [
     # 'from module import *' used; unable to detect undefined names
     "F403",
 ]
-fixable = ["ALL"]
-unfixable = []
-extend-select = ["B007", "B010", "C4", "F", "NPY", "PGH004", "RSE", "RUF100"]
+lint.fixable = ["ALL"]
+lint.unfixable = []
+lint.extend-select = ["B007", "B010", "C4", "F", "NPY", "PGH004", "RSE", "RUF100"]
 
 [tool.ruff.lint.flake8-comprehensions]
 allow-dict-calls-with-keyword-arguments = true
