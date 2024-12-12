@@ -68,7 +68,7 @@ def ElementFromDataframe(loopFilename, df, element, loopCompoundType):
             " does not match\n  Compound type:",
             loopCompoundType.names,
         )
-        raise Exception(f"In dataframe columns do not match compound type")
+        raise Exception("In dataframe columns do not match compound type")
     try:
         struct = LoopProjectFile.ConvertDataFrame(df, loopCompoundType)
         resp = LoopProjectFile.Set(loopFilename, element, data=struct)
@@ -138,7 +138,7 @@ def FromCsv(loopFilename, importPath, overwrite=False):
             os.remove(loopFilename)
         else:
             print(loopFilename, "already exists and overwrite not set", file=sys.stderr)
-            raise Exception(f"already exists and overwrite not set")
+            raise Exception("already exists and overwrite not set")
 
     importPath = importPath.replace("\\", "/")
     if importPath[-1] != "/" and importPath[-1] != "\\":
@@ -304,11 +304,21 @@ def ElementToDataframe(loopFilename, element, loopCompoundType):
         return None
     else:
         columns = list(loopCompoundType.names)
+        attr = resp.get("attributes",{})
+
         df = pandas.DataFrame.from_records(resp["value"], columns=columns)
+
         for name in columns:
-            if type(loopCompoundType[name]) != numpy.dtypes.VoidDType:
+            if type(loopCompoundType[name]) is not numpy.dtypes.VoidDType:
                 df[name] = df[name].astype(loopCompoundType[name])
         df = df.map(lambda x: x.decode() if isinstance(x, bytes) else x)
+        if "headers" in attr:
+            if len(attr["headers"]) != len(columns):
+                print("Number of headers does not match number of columns")
+            else:
+                df = df.rename(columns=dict(zip(columns,attr["headers"])))
+        if "ncols" in attr:
+            df = df.iloc[:, : attr["ncols"]]
         # df.set_index(columns[0], inplace=True)
         return df  # .to_csv(outputFilename)
 
@@ -531,69 +541,6 @@ def handleLoopProjectFile(file, shared_path="/shared"):
             os.remove(filepath)
             raise Exception("Uploaded file is not a valid LoopProjectFile.")
         return
-    else:
-        raise Exception("No file was provided for upload.")
-
-
-def handleCSVlist(files, loopFilename, shared_path="/shared"):
-    if not loopFilename:
-        raise Exception("loopFilename is required")
-    if not files:
-        raise Exception("No CSV files provided")
-
-    loop_file_path = os.path.join(shared_path, loopFilename)
-    saved_files = []
-
-    for file_storage in files.getlist("file"):
-        if file_storage and file_storage.filename.endswith(".csv"):
-            filepath = os.path.join(shared_path, file_storage.filename)
-            file_storage.save(filepath)
-            saved_files.append(filepath)
-
-    try:
-        FromCsv(loop_file_path, shared_path)
-    except Exception as conversion_error:
-        for csv_file in saved_files:
-            try:
-                os.remove(os.path.join(shared_path, csv_file))
-            except Exception as e:
-                print(f"Failed to delete CSV file {csv_file}: {e}")
-        if os.path.exists(loop_file_path):
-            try:
-                os.remove(loop_file_path)
-            except Exception as e:
-                print(f"Failed to delete project file {loop_file_path}: {e}")
-        raise conversion_error
-    else:
-        for csv_file in saved_files:
-            try:
-                os.remove(os.path.join(shared_path, csv_file))
-            except Exception as e:
-                print(f"Failed to delete CSV file {csv_file}: {e}")
-
-    return "success", f"{loopFilename} is created and saved successfully"
-
-
-def handleLoopProjectFile(file, shared_path="/shared"):
-    if file:
-        filename = file.filename
-
-        if not filename.endswith(".loop3d"):
-            filename += ".loop3d"
-
-        filepath = os.path.join(shared_path, filename)
-
-        if os.path.exists(filepath):
-            raise Exception(f"File {filename} already exists in the shared path.")
-
-        file.save(filepath)
-
-        if not LoopProjectFile.CheckFileValid(filepath):
-            os.remove(filepath)
-            raise Exception("Uploaded file is not a valid LoopProjectFile.")
-
-        return
-
     else:
         raise Exception("No file was provided for upload.")
 

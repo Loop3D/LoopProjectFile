@@ -21,6 +21,7 @@ compoundTypeMap = {
     "stratigraphicObservations": LoopProjectFile.stratigraphicObservationType,
     "contacts": LoopProjectFile.contactObservationType,
     "stratigraphicLog": LoopProjectFile.stratigraphicLayerType,
+    "stratigraphicThicknesses": LoopProjectFile.stratigraphicThicknessType,
     "faultLog": LoopProjectFile.faultEventType,
     "foldLog": None,
     "foliationLog": None,

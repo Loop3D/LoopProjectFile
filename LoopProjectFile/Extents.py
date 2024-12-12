@@ -1,6 +1,5 @@
 # import netCDF4
 
-
 # Check extents of Loop Project File is valid
 def CheckExtentsValid(rootGroup, xyzGridSize, verbose=False):
     """
