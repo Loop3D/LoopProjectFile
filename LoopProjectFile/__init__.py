@@ -28,6 +28,7 @@ from .LoopProjectFile import (
     EventRelationshipType, # noqa: F401
     CheckFileIsLoopProjectFile, # noqa: F401
 )  
+
 from .Permutations import (
     Event, # noqa: F401
     perm, # noqa: F401
