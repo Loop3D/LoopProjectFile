@@ -203,7 +203,7 @@ jobs:
   release-please:
     needs: [pip-test-wheels, conda-build]
     runs-on: ubuntu-24.04
-    if: github.ref == 'refs/heads/master'
+    
     steps:
       - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v4
@@ -226,7 +226,7 @@ jobs:
         - macos-latest
         - windows-latest
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-    if: ${{ needs.release-please.outputs.release_created }}
+    if: ${{ github.ref == 'refs/heads/master' && needs.release-please.outputs.release_created == 'true' }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -251,7 +251,7 @@ jobs:
       - macos-latest
       - windows-latest
     
-    if: ${{ needs.release-please.outputs.release_created }}
+    if: ${{ github.ref == 'refs/heads/master' && needs.release-please.outputs.release_created == 'true' }}
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
