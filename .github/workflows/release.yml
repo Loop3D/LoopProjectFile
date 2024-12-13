@@ -208,9 +208,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v4
         id: release
-        # with:
+        with:
         #   config-file: 'release-please-config.json'
-        #   manifest-file: '.release-please-manifest.json'
+          manifest-file: '.release-please-manifest.json'
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
 #if a release is created then run the deploy scripts for github.io, conda, pypi and docker
