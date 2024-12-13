@@ -46,6 +46,6 @@ from .LoopProjectFileUtils import (
     ElementFromDataframe, # noqa: F401
 )  
 
-from .Version import LoopVersion  # noqa: F401
-from .Version import __version__ # noqa: F401
+from .version import LoopVersion  # noqa: F401
+from .version import __version__ # noqa: F401
 from .projectfile import ProjectFile  # noqa: F401

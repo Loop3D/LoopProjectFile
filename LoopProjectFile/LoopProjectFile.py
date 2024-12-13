@@ -37,7 +37,7 @@ import os
 import enum
 
 import netCDF4
-import LoopProjectFile.Version as Version
+import LoopProjectFile.version as version
 import LoopProjectFile.Extents as Extents
 import LoopProjectFile.StructuralModels as StructuralModels
 import LoopProjectFile.DataCollection as DataCollection
@@ -88,7 +88,7 @@ def CreateBasic(filename):
         response = {"errorFlag": True, "errorString": errStr}
     else:
         rootGroup = netCDF4.Dataset(filename, "w", format="NETCDF4")
-        response = Version.SetVersion(rootGroup, version=Version.LoopVersion())
+        response = version.SetVersion(rootGroup, version=version.LoopVersion())
         if not response["errorFlag"]:
             response = DataCollection.SetDefaultSources(rootGroup)
         if not response["errorFlag"]:
@@ -229,7 +229,7 @@ def Set(filename, element, **kwargs):
         root = fileResp["root"]
         try:
             if element == "version":
-                response = Version.SetVersion(root, **kwargs)
+                response = version.SetVersion(root, **kwargs)
             elif element == "extents":
                 response = Extents.SetExtents(root, **kwargs)
             elif element == "strModel":
@@ -404,7 +404,7 @@ def Get(filename, element, **kwargs):
         root = fileResp["root"]
         try:
             if element == "version":
-                response = Version.GetVersion(root)
+                response = version.GetVersion(root)
             elif element == "extents":
                 response = Extents.GetExtents(root)
             elif element == "strModel":
@@ -553,7 +553,7 @@ def CheckFileValid(filename, verbose=False):
 
         xyzGridSize = [0, 0, 0]
         # Check for errors in project file
-        valid = Version.CheckVersionValid(rootgrp, verbose) and valid
+        valid = version.CheckVersionValid(rootgrp, verbose) and valid
         valid = Extents.CheckExtentsValid(rootgrp, xyzGridSize, verbose) and valid
         valid = DataCollection.CheckDataCollectionValid(rootgrp, verbose) and valid
         valid = (
