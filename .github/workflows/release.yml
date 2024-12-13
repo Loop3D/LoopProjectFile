@@ -225,7 +225,7 @@ jobs:
         - macos-latest
         - windows-latest
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-    if: ${{ needs.release-please.outputs.release_created }}
+    if: ${{ needs.release.outputs.release_created }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -250,7 +250,7 @@ jobs:
       - macos-latest
       - windows-latest
     
-    if: ${{ needs.release-please.outputs.release_created }}
+    if: ${{ needs.release.outputs.release_created }}
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
