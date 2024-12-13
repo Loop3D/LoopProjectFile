@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/Loop3D/LoopProjectFile/compare/v0.2.0...v0.2.1) (2024-12-13)
+
+
+### Bug Fixes
+
+* trigger release ([7e1a830](https://github.com/Loop3D/LoopProjectFile/commit/7e1a83086b0687b6ea4adb1d4138ccb78dbc7e1b))
+
 ## [0.2.0](https://github.com/Loop3D/LoopProjectFile/compare/0.1.4...v0.2.0) (2024-12-13)
 
 
