@@ -29,7 +29,7 @@ jobs:
   #         path: ./wheelhouse/*.whl
   sdist:
     name: Build sdist
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -46,7 +46,7 @@ jobs:
 
   publish:
     name: Publish wheels to pypi
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
